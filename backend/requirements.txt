@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+psycopg[binary,pool]
+pydantic-settings
+google-genai
+httpx
+numpy
+pandas
+scikit-learn
+joblib

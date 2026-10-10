@@ -1,0 +1,128 @@
+/* Frutiger Aero design tokens: sky blues, leaf greens, glass, gloss. */
+:root {
+  --sky-top: #7fd4ff;
+  --sky-bottom: #e6f9ff;
+  --aqua: #19a9e5;
+  --aqua-deep: #0b6fb8;
+  --leaf: #6cc24a;
+  --leaf-deep: #2e8b2e;
+  --ink: #0d3b57;
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --radius: 18px;
+  font-family: "Segoe UI", "Frutiger", "Myriad Pro", system-ui, sans-serif;
+  color: var(--ink);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: linear-gradient(var(--sky-top), var(--sky-bottom));
+}
+
+.shell { position: relative; height: 100vh; }
+.map { position: absolute; inset: 0; }
+
+/* Glass panel with the signature top-half gloss highlight */
+.glass {
+  position: relative;
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius);
+  backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 8px 30px rgba(11, 111, 184, 0.3), inset 0 1px 0 #fff;
+}
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 50% 0;
+  border-radius: var(--radius) var(--radius) 60% 60% / var(--radius) var(--radius) 20px 20px;
+  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05));
+  pointer-events: none;
+}
+
+.sidebar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  background: linear-gradient(var(--aqua), var(--leaf-deep));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+h2 { margin: 0 0 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.tagline { margin: 0; }
+.error { color: #b00020; }
+
+section { display: flex; flex-direction: column; gap: 8px; }
+label { display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
+input[type="range"] { accent-color: var(--aqua); }
+
+textarea {
+  border: 1px solid var(--glass-edge);
+  border-radius: 12px;
+  padding: 10px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.7);
+  resize: vertical;
+}
+
+/* Glossy pill button */
+.aero {
+  flex: 1;
+  padding: 8px 14px;
+  border: 1px solid rgba(11, 111, 184, 0.4);
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  background: linear-gradient(#fff 0%, #e3f4fd 49%, #c9e9fa 50%, #e9f8ff 100%);
+  box-shadow: inset 0 1px 0 #fff, 0 2px 6px rgba(11, 111, 184, 0.25);
+}
+.aero.on {
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(#8fdcff 0%, var(--aqua) 49%, var(--aqua-deep) 50%, #37b6ee 100%);
+}
+.toggle { display: flex; gap: 8px; }
+
+.cards { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.card { padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; --radius: 12px; }
+
+/* Map markers: glossy bubbles */
+.orb {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: radial-gradient(circle at 30% 25%, #fff 0 12%, var(--orb, var(--aqua)) 45%, rgba(0, 0, 0, 0.35) 130%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+.orb-completed   { --orb: var(--leaf); }
+.orb-in_progress { --orb: var(--aqua); }
+.orb-proposed    { --orb: #ffc531; }
+.orb-rejected    { --orb: #9aa7b0; }
+.orb-suggested   { --orb: #c86bff; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 0.8rem; margin-top: auto; }
+.legend .orb { width: 12px; height: 12px; border-width: 1px; vertical-align: -1px; cursor: default; }
+
+.info { color: #123; font-size: 0.85rem; }
+.info ul { margin: 6px 0 0; padding-left: 18px; }

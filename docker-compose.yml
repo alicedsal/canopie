@@ -1,0 +1,16 @@
+# Local stand-in for Tiger Cloud: same TimescaleDB extension, same SQL.
+services:
+  db:
+    image: timescale/timescaledb:latest-pg17
+    environment:
+      POSTGRES_USER: canopy
+      POSTGRES_PASSWORD: canopy
+      POSTGRES_DB: canopy
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d:ro
+      - canopy-db:/var/lib/postgresql/data
+
+volumes:
+  canopy-db:
