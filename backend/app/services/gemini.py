@@ -80,7 +80,7 @@ async def write_rationale(suggestion: dict) -> str:
 async def agent_reply(text: str, intent: str, projects: list[dict], suggestions: list[dict]) -> str:
     text = await _generate(
         (
-            "You are Canopy, a friendly text-message assistant for Chapel Hill residents. "
+            "You are Canopie, a friendly text-message assistant for Chapel Hill residents. "
             "Reply in under 60 words, no markdown. If they gave feedback or a suggestion, confirm it "
             "was logged for planners. If they asked what exists or is planned, answer only from the "
             "project list. If they asked what would help most somewhere, answer only from the "

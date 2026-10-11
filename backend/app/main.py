@@ -15,7 +15,7 @@ async def lifespan(_: FastAPI):
     pool.close()
 
 
-app = FastAPI(title="Canopy API", lifespan=lifespan)
+app = FastAPI(title="Canopie API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.frontend_origin],

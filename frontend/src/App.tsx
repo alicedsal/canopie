@@ -142,7 +142,7 @@ export default function App() {
       />
 
       <aside className="glass sidebar">
-        <h1>Canopy</h1>
+        <h1>Canopie</h1>
         <p className="tagline">Chapel Hill, planned in the open.</p>
         {error && <p className="error">{error}</p>}
 
@@ -286,7 +286,7 @@ export default function App() {
             <div className="text-us">
               <QRCodeSVG value={`sms:${AGENT_NUMBER}`} size={84} bgColor="transparent" />
               <span>
-                Or text Canopy on iMessage:
+                Or text Canopie on iMessage:
                 <strong>{AGENT_NUMBER}</strong>
               </span>
             </div>

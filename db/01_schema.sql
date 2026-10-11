@@ -1,4 +1,4 @@
--- Canopy schema. Runs as-is on Tiger Cloud and on the local docker TimescaleDB.
+-- Canopie schema. Runs as-is on Tiger Cloud and on the local docker TimescaleDB.
 -- Relational tables and time-series hypertables live side by side.
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;

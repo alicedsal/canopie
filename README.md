@@ -1,4 +1,4 @@
-# canopy
+# canopie
 
 a planning map for chapel hill, nc. it shows what the town has built and proposed, where the need is greatest, and which new projects would do the most good for a given budget and time span. residents shape the suggestions by texting an imessage agent or using the web form.
 
