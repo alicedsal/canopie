@@ -70,10 +70,11 @@ export default function App() {
                 <strong>{s.title}</strong>
                 <span>
                   ${s.town_cost_usd.toLocaleString()} town cost · {s.months} mo ·{" "}
-                  {Math.round((s.approval_prob ?? 0) * 100)}% approval
+                  alignment {Math.round((s.approval_prob ?? 0) * 100)}/100
                 </span>
                 <span>
-                  {s.constituents_affected?.toLocaleString()} residents · {s.constituent_mentions} asked for this
+                  {s.constituents_affected?.toLocaleString()} residents · {s.constituent_mentions} asked for this ·{" "}
+                  satisfaction {s.survey_delta_pct.overall >= 0 ? "+" : ""}{s.survey_delta_pct.overall} pts
                 </span>
               </li>
             ))}

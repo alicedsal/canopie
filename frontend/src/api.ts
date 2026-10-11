@@ -8,6 +8,7 @@ export interface Impact {
   delta_lst_f: number | null;
   delta_flood_risk: number | null;
   constituents_affected: number | null;
+  runoff_mgal?: number | null;
 }
 
 export interface Project extends Impact {
@@ -34,6 +35,8 @@ export interface Suggestion extends Impact {
   months: number;
   constituent_mentions: number;
   score: number;
+  goals: Record<string, number>;
+  survey_delta_pct: Record<string, number>;
   rationale?: string;
 }
 

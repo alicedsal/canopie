@@ -38,8 +38,7 @@ import {
 } from 'lucide-react';
 
 const API_KEY =
-  import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
-  'AIzaSyD55igXn0olPUfgDj1-OTxBDALeaY_Ed5w';
+  import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
 
 export default function App() {
   // State

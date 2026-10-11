@@ -1,8 +1,8 @@
 # Canopy (working name)
 
-A planning map for Chapel Hill, NC. It plots what the town has built and what has been proposed, predicts what each project would change and how likely it is to be approved, and suggests the best set of new projects for a given budget and time span. Residents shape the suggestions by texting an iMessage agent or using the web form.
+A planning map for Chapel Hill, NC. It plots what the town has built and what has been proposed, scores what each project would change at a location, and suggests the best set of new projects for a given budget and time span. Residents shape the suggestions by texting an iMessage agent or using the web form.
 
-> The seed data in `db/02_seed.sql` and the effect sizes in `backend/ml/priors.py` are placeholders. Do not present them as real figures.
+> **What the scoring is.** `backend/ml/impact_engine.py` is a rule-based scoring engine: hand-set formulas over location features and project size. It is not a model trained on data. The district baselines in it, the project templates in `backend/ml/priors.py` and the seed data in `db/02_seed.sql` are placeholders chosen by hand. Do not present any of them as measured or learned figures.
 
 ## How it fits together
 
@@ -16,7 +16,7 @@ A planning map for Chapel Hill, NC. It plots what the town has built and what ha
                                                       │   continuous aggregates
                                                       v
                               backend/app (FastAPI) ── Gemini: sentiment, topics, rationales
-                                      │              ── backend/ml: approval + impact models, suggester
+                                      │              ── backend/ml: rule-based impact engine, suggester
                                       v
                               frontend/ (React + Google Maps, Frutiger Aero UI)
 ```
@@ -26,7 +26,8 @@ A planning map for Chapel Hill, NC. It plots what the town has built and what ha
 | `frontend/` | React + Vite + `@vis.gl/react-google-maps`, glass UI in `src/styles/aero.css` | Frutiger Aero |
 | `backend/app/` | FastAPI: projects, metrics, feedback, suggestions, agent endpoint | |
 | `backend/app/services/gemini.py` | Sentiment and topic extraction, rationales, agent replies | Gemini |
-| `backend/ml/` | Approval and impact models, candidate generation, budget selection | |
+| `backend/ml/` | Rule-based impact engine (Python port of B's), project templates, budget selection | |
+| `chapel-hill-spatial-gbdt-impact-engine/` | B's original standalone prototype of the engine and a simulator UI. The app does not run it; kept for reference and UI parts. | |
 | `backend/ingest/` | Loaders for NWIS, Sentinel-2, Landsat, town GIS | |
 | `db/` | Schema with hypertables, continuous aggregates, compression | Tiger Data |
 | `agent/` | iMessage agent on Spectrum, forwards to the backend | Photon, Community |
@@ -56,10 +57,10 @@ npm install
 npm run dev
 ```
 
-Train the models (optional; the API falls back to priors without them), from `backend/`:
+Check the Python engine still matches B's TypeScript original, from `backend/`:
 
 ```bash
-.venv/Scripts/python -m ml.train
+.venv/Scripts/python -m ml.test_impact_engine
 ```
 
 Agent (from `agent/`, after copying `.env.example` to `.env`):
@@ -75,7 +76,9 @@ API docs are at http://localhost:8000/docs once the backend is up.
 
 `GET /api/suggestions?budget=&horizon_months=&mode=`
 
-- `balanced`: approval probability x predicted impact (canopy, heat, flood) x residents reached, with a small boost for constituent demand.
-- `constituent`: approval probability x how many residents asked for it. No environmental term.
+- `balanced`: how much the project raises the engine's council-goal alignment score at that location x residents reached, with a small boost for constituent demand.
+- `constituent`: alignment score x how many residents asked for it. Nothing else.
+
+The API field `approval_prob` holds the alignment score scaled to 0..1. It is not a probability of approval; the UI labels it "alignment".
 
 Both pick greedily by score per town dollar (after grant match) until the budget is spent.

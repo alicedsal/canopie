@@ -1,14 +1,14 @@
 -- DEMO SEED DATA. Everything below is illustrative so the app runs before ingest exists.
--- Coordinates are approximate, populations and projects are invented.
+-- District centres match backend/ml/impact_engine.py; populations and projects are invented.
 -- Replace with backend/ingest/* output (see docs/PLAN.md phase 2).
 
 INSERT INTO districts (name, lat, lng, population) VALUES
     ('Franklin St',   35.9132, -79.0558, 6200),
-    ('Booker Creek',  35.9420, -79.0270, 4800),
-    ('Blue Hill',     35.9290, -79.0260, 3900),
-    ('Bolin Creek',   35.9230, -79.0650, 5100),
-    ('Northside',     35.9170, -79.0640, 2700),
-    ('Homestead Rd',  35.9500, -79.0700, 4300);
+    ('Booker Creek',  35.9392, -79.0285, 4800),
+    ('Blue Hill',     35.9324, -79.0182, 3900),
+    ('Bolin Creek',   35.9270, -79.0435, 5100),
+    ('Northside',     35.9185, -79.0620, 2700),
+    ('Homestead Rd',  35.9525, -79.0560, 4300);
 
 INSERT INTO projects (title, description, category, status, source, district_id, lat, lng, budget_usd, grant_match_pct, start_date, end_date) VALUES
     ('Franklin St shade tree corridor', 'Street trees along the downtown sidewalk.', 'tree_canopy', 'completed', 'cip', 1, 35.9135, -79.0545, 180000, 0, '2023-03-01', '2023-09-30'),

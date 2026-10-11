@@ -9,17 +9,6 @@ from ..services import gemini
 
 router = APIRouter(tags=["suggestions"])
 
-_DISTRICT_CONTEXT = """
-SELECT d.*,
-    (SELECT avg(value) FROM observations o
-      WHERE o.district_id = d.id AND o.metric = 'ndvi' AND o.time > now() - INTERVAL '90 days') AS ndvi,
-    (SELECT avg(value) FROM observations o
-      WHERE o.district_id = d.id AND o.metric = 'lst_f' AND o.time > now() - INTERVAL '90 days') AS lst_f,
-    (SELECT avg(sentiment) FROM feedback f
-      WHERE f.district_id = d.id AND f.time > now() - INTERVAL '90 days') AS sentiment
-FROM districts d
-"""
-
 _TOPIC_DEMAND = """
 SELECT district_id, topic, count(*) AS n
 FROM feedback, unnest(topics) AS topic
@@ -35,9 +24,9 @@ async def get_suggestions(
     mode: Literal["balanced", "constituent"] = "balanced",
     explain: bool = False,
 ):
-    """balanced: predicted impact x approval probability.
-    constituent: constituent demand x approval probability only (no environmental score)."""
-    districts = await fetch_all(_DISTRICT_CONTEXT)
+    """balanced: alignment uplift (rule-based impact engine) x residents reached.
+    constituent: alignment x how many residents asked for it, nothing else."""
+    districts = await fetch_all("SELECT * FROM districts ORDER BY id")
     demand = await fetch_all(_TOPIC_DEMAND)
     picks = suggest(districts, demand, budget=budget, horizon_months=horizon_months, mode=mode)
     if explain:

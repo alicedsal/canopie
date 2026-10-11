@@ -38,22 +38,17 @@ Roles after the change (swap if this is wrong): **B** owns the model and the loc
 - [ ] Paste the keys into the local env files (`.env`, `frontend/.env.local`, `agent/.env`) and delete them from the shared Google Doc
 - [ ] Pick a name (can wait until the Devpost write-up)
 
-## Phase 1: B's model plugs into the existing API (B; A does not wait)
+## Phase 1: B's engine in the app (done)
 
-The app already runs end to end on the stand-in model, so A carries on with phases 3 to 7. B's model replaces the stand-in whenever it is ready, and if it is not ready the demo still works.
+B's engine turned out to be rule-based scoring (hand-set formulas), not a trained model. Its formulas are ported to `backend/ml/impact_engine.py` and drive `predict()`, suggestions and the agent. `python -m ml.test_impact_engine` checks the port against B's TypeScript original.
 
-The one requirement for B: for a project (category, budget, duration) at a location, return these fields, which is what `predict()` returns today:
-
-`approval_prob`, `delta_ndvi`, `delta_lst_f`, `delta_flood_risk`, `constituents_affected`
-
-- [ ] B: push the model code and saved model to `backend/ml/` on a branch, with a function that returns those fields (any it cannot predict keep the stand-in value)
-- [ ] B: add anything new to `backend/requirements.txt`
-- [ ] A: point `predict()` at B's function (one edit, about ten lines)
-- [ ] A: show `approval_prob` as "feasibility" in the UI text. The field name stays; the label changes because there is no decision history to back the word "probability".
-- [ ] B: write three sentences on training data and validation for the README and the pitch
-- [ ] Only after B's model is in: delete `ml/train.py` and trim `ml/priors.py`
-
-Phase 2 (location features) is B's and is only needed for B's model. The seed data already feeds the charts.
+- [x] Port the scoring formulas to Python, matching B's outputs exactly
+- [x] `predict()` uses the engine; stand-in model (`train.py`, `features.py`) deleted
+- [x] UI shows the score as "alignment", not "approval"
+- [x] "Best impact" ranks by alignment uplift over doing nothing x residents reached
+- [ ] B: revoke the Google Maps key that was committed in `chapel-hill-spatial-gbdt-impact-engine/src/App.tsx` (removed from the file, still in git history)
+- [ ] Both: in the pitch, call it a rule-based impact scoring engine. Do not claim GBDT, training or SHAP.
+- [ ] Optional: reuse B's simulator panel and new-project form in `frontend/`
 
 ## Phase 2: location features on Tiger Data (B data, A database)
 
