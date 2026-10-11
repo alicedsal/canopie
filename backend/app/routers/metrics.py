@@ -2,6 +2,7 @@ from typing import Literal
 
 from fastapi import APIRouter
 
+from ml import budget as town_budget
 from ml.grid import CELL_M, cell_bounds, cells, source
 from ml.need import need_scores
 from ml.priors import CATEGORIES
@@ -63,3 +64,10 @@ async def survey():
     items = [{"category": cat, "label": CATEGORIES[cat]["label"], "demand_weight": round(demand_weight(cat), 3), **s}
              for cat, s in SURVEY.items()]
     return {"source": SOURCE, "items": sorted(items, key=lambda i: i["is_score"], reverse=True)}
+
+
+@router.get("/budget")
+async def budget():
+    """Voter-approved bond figures from the Town's Capital Improvements Program page."""
+    return {"bonds_2024": town_budget.BONDS_2024, "source": town_budget.SOURCE_URL,
+            "stormwater_2015_bond_issued_june_2025_usd": town_budget.STORMWATER_2015_BOND_ISSUED_JUNE_2025_USD}

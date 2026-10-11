@@ -6,10 +6,9 @@ every 100 m cell inside the real town limits, carrying measured values:
   lst_f        Landsat surface temperature
   stream_m     distance to the nearest mapped stream
   population   residents in the cell, from the town's population density raster
+  viirs        night-time radiance, NASA Black Marble (VIIRS Day/Night Band)
 Without that file it falls back to cells near the district centres with values
 interpolated from six hand-entered district figures, so a fresh clone still runs.
-
-Night-time radiance (`viirs`) is interpolated in both cases; no real source is loaded yet.
 
 Every cell also gets neighbourhood summaries:
   *_lag_q    mean of the 8 adjacent cells (queen contiguity, row-standardised)
@@ -90,8 +89,9 @@ def cells() -> dict[tuple[int, int], dict]:
     """All grid cells keyed by (row, col). Built once per process."""
     data = _data()
     if data:
-        grid = {(i, j): _cell(i, j, {"ndvi": ndvi, "lst_f": lst_f, "stream_m": stream_m, "population": pop})
-                for i, j, ndvi, lst_f, stream_m, pop in data["cells"]}
+        grid = {(i, j): _cell(i, j, {"ndvi": ndvi, "lst_f": lst_f, "stream_m": stream_m, "population": pop,
+                                     "viirs": glow})
+                for i, j, ndvi, lst_f, stream_m, pop, glow in data["cells"]}
     else:
         reach = int(DISTRICT_RADIUS_M / CELL_M) * 2 + 2
         lat0, lng0 = _frame()

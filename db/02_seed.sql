@@ -10,14 +10,15 @@ INSERT INTO districts (name, lat, lng, population) VALUES
     ('Northside',     35.9185, -79.0620, 2700),
     ('Homestead Rd',  35.9525, -79.0560, 4300);
 
-INSERT INTO projects (title, description, category, status, source, district_id, lat, lng, budget_usd, grant_match_pct, start_date, end_date) VALUES
-    ('Franklin St shade tree corridor', 'Street trees along the downtown sidewalk.', 'tree_canopy', 'completed', 'cip', 1, 35.9135, -79.0545, 180000, 0, '2023-03-01', '2023-09-30'),
-    ('Booker Creek stormwater wetland', 'Nature-based retention basin upstream of Eastgate.', 'stormwater', 'completed', 'cip', 2, 35.9410, -79.0285, 950000, 75, '2022-06-01', '2024-01-15'),
-    ('Northside pedestrian lighting', 'Warm LED fixtures on residential blocks.', 'lighting', 'completed', 'cip', 5, 35.9175, -79.0632, 210000, 0, '2024-02-01', '2024-06-30'),
-    ('Blue Hill cool pavement pilot', 'Reflective seal coat on parking and service lanes.', 'cool_pavement', 'in_progress', 'cip', 3, 35.9295, -79.0252, 420000, 0, '2026-04-01', '2026-12-15'),
-    ('Bolin Creek greenway extension', 'Paved multi-use path to Umstead Park.', 'bike_ped', 'proposed', 'cip', 4, 35.9238, -79.0661, 1400000, 20, NULL, NULL),
-    ('Homestead Rd sidewalk gaps', 'Close sidewalk gaps near the aquatic center.', 'bike_ped', 'proposed', 'constituent', 6, 35.9495, -79.0712, 520000, 20, NULL, NULL),
-    ('Franklin St plaza revitalization', 'Rebuild the 100 block plaza.', 'revitalization', 'rejected', 'cip', 1, 35.9130, -79.0570, 2600000, 0, NULL, NULL);
+-- The Town's named capital projects. Names from the Capital Improvements Program page; the
+-- page publishes no budget, status or dates. Locations from the Town's GIS.
+-- Rebuild with: python -m ingest.cip_projects
+INSERT INTO projects (title, description, category, status, source, district_id, lat, lng, budget_usd) VALUES
+    ('West Rosemary Streetscape', 'Named in the Town''s Capital Improvements Program. The Town''s page gives no budget, status or dates. Location: midpoint of West Rosemary St; the project''s exact extent is not published.', 'streets_sidewalks', 'capital_program', 'cip', 1, 35.91204, -79.06211, NULL),
+    ('Ephesus Road Sidewalk Infill Project', 'Named in the Town''s Capital Improvements Program. The Town''s page gives no budget, status or dates. Location: midpoint of Ephesus Church Rd, taken to be the road meant; the segment is not published.', 'streets_sidewalks', 'capital_program', 'cip', 3, 35.93236, -79.01060, NULL),
+    ('Cedar Falls Park Parking Lot', 'Named in the Town''s Capital Improvements Program. The Town''s page gives no budget, status or dates. Location: Cedar Falls Park, 501 Weaver Dairy Rd.', 'parks_recreation', 'capital_program', 'cip', 2, 35.95996, -79.03351, NULL),
+    ('Hargraves Park Renovations', 'Named in the Town''s Capital Improvements Program. The Town''s page gives no budget, status or dates. Location: Hargraves Park, 216 N Roberson St.', 'parks_recreation', 'capital_program', 'cip', 5, 35.91290, -79.06389, NULL),
+    ('Public Works Roof Design and Replacement', 'Named in the Town''s Capital Improvements Program. The Town''s page gives no budget, status or dates. Location: Public Works administration building, Town Operations Center, 6850 Millhouse Rd, taken to be the building meant.', 'public_facilities', 'capital_program', 'cip', 6, 35.97774, -79.07335, NULL);
 
 -- Two years of weekly NDVI + land surface temperature per district.
 INSERT INTO observations (time, district_id, metric, value)

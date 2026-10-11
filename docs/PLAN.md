@@ -59,7 +59,9 @@ Checkpoint: every map cell has the features the model needs, stored in Tiger Dat
 - [x] Spatial unit fixed at 100 m cells (`backend/ml/grid.py`, in memory; a `cells` table in Tiger Data is optional)
 - [x] Population per 100 m cell loaded from the town's density raster (`python -m ingest.town_grid`)
 - [x] Real NDVI (Sentinel-2), surface temperature (Landsat), town limits and stream distance per 100 m cell, in `backend/ml/data/town_grid.json`
-- [ ] Not loaded: night lights (VIIRS), NCDOT bike/ped data, FEMA data, and the town's capital projects (that layer needs a login)
+- [x] Night lights loaded from NASA Black Marble (VIIRS Day/Night Band)
+- [x] Budget slider scaled to the Town's 2024 bond figures
+- [ ] Not loaded: NCDOT bike/ped data, FEMA data, and the town's capital projects layer (needs a login)
 - [x] A: 30 days of real Booker Creek gauge readings loaded (USGS 02097386; the 02097000 in the early notes is the Haw River)
 - [x] A: schema and seed loaded on the Tiger Cloud service; `DATABASE_URL` points at it
 - [x] A: Booker Creek gauge chart in the sidebar, read from the `observations_daily` continuous aggregate
@@ -73,7 +75,7 @@ Checkpoint: the map shows where each kind of project would work best.
 
 - [x] Need layer: heat, low canopy, flood, dark streets or overall, drawn as 100 m cells from `GET /api/need` (replaces the planned effectiveness layer)
 - [x] Status filter chips for the project pins
-- [ ] Hand-enter 8 to 12 real Chapel Hill projects (done, in progress, proposed) from the town's capital plan into `db/02_seed.sql`, replacing the invented ones. Context for the map only, not training data.
+- [x] Invented projects replaced by the five mappable projects the Town names in its Capital Improvements Program (names and locations only; the Town publishes no budgets or status for them)
 - [x] Project popup: status, district, budget, description, and scores where available
 - [x] District fly-to buttons, and a Show button on each suggestion
 

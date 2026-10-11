@@ -3,13 +3,15 @@
 Kept separate from the impact model on purpose. Need says where a problem is; impact
 (ml/impact_engine.py) says what a given project would change there.
 
-Each domain is a 0..1 percentile rank across the grid. Heat and canopy come from satellite
-measurements and use the neighbourhood features in ml/grid.py so that one odd cell does
-not dominate. Lighting still rests on interpolated night-radiance figures, not real data:
+Each domain is a 0..1 percentile rank across the grid, built from measured values. Heat,
+canopy and lighting use the neighbourhood features in ml/grid.py so that one odd cell
+does not dominate:
   heat      surface temperature: 250 m neighbourhood, plus how much hotter the cell is than it
   canopy    lack of vegetation over the 250 m neighbourhood
   flood     closeness to the nearest mapped stream (town stormwater division centerlines)
-  lighting  low night-time radiance over the 250 m neighbourhood
+  lighting  low night-time radiance (NASA Black Marble) over the 250 m neighbourhood. This is
+            light seen from orbit at about 500 m resolution, a proxy for street lighting;
+            dark cells include parks and woods as well as unlit streets
 
 Transport, safety, accessibility and housing need are in the design document but have no
 data behind them yet, so they are not scored here rather than being guessed.

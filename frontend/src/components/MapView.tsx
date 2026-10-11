@@ -13,12 +13,12 @@ interface Pin extends Impact {
   kind: string; // project status, or "suggested"
   lat: number;
   lng: number;
-  budget: number;
+  budget: number | null;
   district: string;
 }
 
 const toPins = (projects: Project[], suggestions: Suggestion[]): Pin[] => [
-  ...projects.map((p) => ({ ...p, key: `p${p.id}`, kind: p.status, budget: Number(p.budget_usd) })),
+  ...projects.map((p) => ({ ...p, key: `p${p.id}`, kind: p.status, budget: p.budget_usd })),
   ...suggestions.map((s, i) => ({ ...s, key: `s${i}`, kind: "suggested", budget: s.budget_usd })),
 ];
 
@@ -67,7 +67,8 @@ export default function MapView({ projects, suggestions, needCells, needColor, f
             <div className="info">
               <strong>{selected.title}</strong>
               <div>
-                {selected.kind.replace("_", " ")} · {selected.district} · ${selected.budget.toLocaleString()}
+                {selected.kind.replace("_", " ")} · {selected.district} ·{" "}
+                {selected.budget == null ? "budget not published" : `$${selected.budget.toLocaleString()}`}
               </div>
               {selected.description && <div>{selected.description}</div>}
               {selected.approval_prob != null && (

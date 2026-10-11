@@ -19,14 +19,14 @@ CREATE TABLE projects (
     description      TEXT NOT NULL DEFAULT '',
     -- keys of backend/ml/priors.py CATEGORIES
     category         TEXT NOT NULL,
-    -- completed | in_progress | proposed | rejected
+    -- capital_program (named in the Town's CIP) | proposed | completed | in_progress | rejected
     status           TEXT NOT NULL,
     -- cip (town records) | constituent | model
     source           TEXT NOT NULL DEFAULT 'cip',
     district_id      INTEGER NOT NULL REFERENCES districts(id),
     lat              DOUBLE PRECISION NOT NULL,
     lng              DOUBLE PRECISION NOT NULL,
-    budget_usd       NUMERIC(12, 2) NOT NULL,
+    budget_usd       NUMERIC(12, 2),            -- NULL when the Town has not published one
     grant_match_pct  REAL NOT NULL DEFAULT 0,
     start_date       DATE,
     end_date         DATE,

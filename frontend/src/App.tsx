@@ -2,15 +2,15 @@ import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 
 import {
-  addProposal, getDistricts, getFeedback, getMetrics, getNeed, getProjects, getSuggestions, getSurvey,
+  addProposal, getBudget, getDistricts, getFeedback, getMetrics, getNeed, getProjects, getSuggestions, getSurvey,
   postFeedback, postRationale,
   type District, type FeedbackItem, type MetricPoint, type Mode, type NeedCell, type NeedDomain,
-  type Project, type Suggestion, type SurveyItem,
+  type Project, type Suggestion, type SurveyItem, type TownBudget,
 } from "./api";
 import MapView from "./components/MapView";
 import Sparkline from "./components/Sparkline";
 
-const STATUSES = ["completed", "in_progress", "proposed", "rejected", "suggested"];
+const STATUSES = ["capital_program", "proposed", "suggested"];
 
 const NEED_LAYERS: { key: NeedDomain | "off"; label: string; color: string }[] = [
   { key: "off", label: "Off", color: "" },
@@ -30,6 +30,7 @@ export default function App() {
   const [lists, setLists] = useState<Record<Mode, Suggestion[]>>({ balanced: [], constituent: [] });
   const [spent, setSpent] = useState(0);
   const [budget, setBudget] = useState(2_000_000);
+  const [town, setTown] = useState<TownBudget | null>(null);
   const [horizon, setHorizon] = useState(12);
   const [mode, setMode] = useState<Mode>("balanced");
   const [hidden, setHidden] = useState<string[]>([]);
@@ -54,6 +55,8 @@ export default function App() {
   useEffect(() => {
     getProjects().then(setProjects).catch(fail);
     getSurvey().then((r) => setSurvey(r.items)).catch(fail);
+    // Start the slider at what the Town has actually issued from its 2024 bonds.
+    getBudget().then((b) => { setTown(b); setBudget(b.bonds_2024.issued.total_usd); }).catch(fail);
     getDistricts()
       .then((ds) => {
         setDistricts(ds);
@@ -193,10 +196,27 @@ export default function App() {
         <section>
           <h2>Next period</h2>
           <label>
-            Budget: ${(budget / 1e6).toFixed(1)}M
-            <input type="range" min={250_000} max={22_000_000} step={250_000} value={budget}
+            Budget: ${(budget / 1e6).toFixed(2)}M
+            <input type="range" min={250_000} max={town?.bonds_2024.authorised_usd ?? 44_000_000} step={10_000} value={budget}
               onChange={(e) => setBudget(Number(e.target.value))} />
           </label>
+          {town && (
+            <>
+              <div className="chips">
+                <button className="aero" onClick={() => setBudget(town.bonds_2024.issued.total_usd)}>
+                  Issued {town.bonds_2024.issued.date}: ${(town.bonds_2024.issued.total_usd / 1e6).toFixed(2)}M
+                </button>
+                <button className="aero" onClick={() => setBudget(town.bonds_2024.authorised_usd)}>
+                  Approved: ${(town.bonds_2024.authorised_usd / 1e6).toFixed(0)}M
+                </button>
+              </div>
+              <span className="meta">
+                2024 bonds, approved by voters {town.bonds_2024.approved}:{" "}
+                {Object.entries(town.bonds_2024.by_category_usd)
+                  .map(([k, v]) => `${k} $${(v / 1e6).toFixed(1)}M`).join(" · ")}
+              </span>
+            </>
+          )}
           <label>
             Time span: {horizon} months
             <input type="range" min={3} max={36} step={3} value={horizon}
@@ -216,7 +236,7 @@ export default function App() {
           <h2>Suggested projects</h2>
           <div className="bar"><div style={{ width: `${Math.min(100, (spent / budget) * 100)}%` }} /></div>
           <span className="meta">
-            ${(spent / 1e6).toFixed(2)}M of ${(budget / 1e6).toFixed(1)}M committed (town share, after grants)
+            ${(spent / 1e6).toFixed(2)}M of ${(budget / 1e6).toFixed(2)}M committed (town share, after grants)
           </span>
           {suggestions.length === 0 && <p>Nothing fits this budget and time span.</p>}
           <ul className="cards">

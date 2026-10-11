@@ -7,6 +7,9 @@ Writes backend/ml/data/town_grid.json, which ml/grid.py reads at startup. Source
   heat          Landsat 8/9 Collection 2 Level 2 surface temperature (band 10), averaged to each cell
   streams       Town of Chapel Hill Stormwater Division stream centerlines, distance from each cell
   population    Town of Chapel Hill GIS Population_Density raster, sampled at each cell centre
+  night lights  NASA Black Marble (VIIRS Day/Night Band, gap-filled and moonlight-corrected
+                radiance), averaged over several nights. Native resolution is about 500 m,
+                so neighbouring cells share a value.
 
 Satellite scenes come from the Microsoft Planetary Computer catalogue, which serves the ESA
 and USGS archives. Each is one cloud-free summer scene, so heat is a single hot afternoon,
@@ -14,7 +17,9 @@ not a seasonal average.
 """
 import json
 import math
+import re
 import struct
+import zlib
 from pathlib import Path
 
 import httpx
@@ -25,6 +30,9 @@ TOWN_GIS = "https://gis-portal.townofchapelhill.org/server/rest/services"
 PC_DATA = "https://planetarycomputer.microsoft.com/api/data/v1/item"
 SENTINEL_ITEM = "S2C_MSIL2A_20260701T155821_R097_T17SPV_20260701T211311"
 LANDSAT_ITEM = "LC08_L2SP_016035_20260705_02_T1"
+GIBS = "https://gibs.earthdata.nasa.gov"
+NIGHT_LAYER = "VIIRS_SNPP_GapFilled_BRDF_Corrected_DayNightBand_Radiance"
+NIGHT_DATES = ["2026-06-20", "2026-06-27", "2026-07-04", "2026-07-08", "2026-07-20", "2026-07-27"]
 STREAM_CAP_M = 500
 # The density raster's unit is not documented. People per square mile is assumed; the
 # script prints the implied town population so the assumption can be checked.
@@ -64,6 +72,65 @@ def raster(collection: str, item: str, bbox: str, rows: int, cols: int, **params
     band, mask = values[:size], values[-size:] if shape[0] > 1 else None  # last band is the valid-data mask
     return [[None if (mask and not mask[i * cols + j]) or band[i * cols + j] != band[i * cols + j]
              else band[i * cols + j] for j in range(cols)] for i in range(rows)]
+
+
+def _png_rgba(raw: bytes) -> tuple[int, int, bytes]:
+    """Decode a non-interlaced 8-bit RGBA PNG with the standard library only."""
+    width, height, depth, colour = struct.unpack(">IIBB", raw[16:26])
+    assert (depth, colour) == (8, 6), "expected 8-bit RGBA"
+    data, pos = b"", 8
+    while pos < len(raw):
+        length, kind = struct.unpack(">I4s", raw[pos:pos + 8])
+        if kind == b"IDAT":
+            data += raw[pos + 8:pos + 8 + length]
+        pos += 12 + length
+    data, stride, out, prev = zlib.decompress(data), width * 4, bytearray(), bytes(width * 4)
+    for y in range(height):
+        f, line = data[y * (stride + 1)], bytearray(data[y * (stride + 1) + 1:(y + 1) * (stride + 1)])
+        for x in range(stride):
+            a = line[x - 4] if x >= 4 else 0
+            b, c = prev[x], prev[x - 4] if x >= 4 else 0
+            if f == 1:
+                line[x] = (line[x] + a) & 255
+            elif f == 2:
+                line[x] = (line[x] + b) & 255
+            elif f == 3:
+                line[x] = (line[x] + (a + b) // 2) & 255
+            elif f == 4:
+                p = a + b - c
+                line[x] = (line[x] + min((a, b, c), key=lambda v: abs(p - v))) & 255
+        out += line
+        prev = bytes(line)
+    return width, height, bytes(out)
+
+
+def night_radiance(lat0: float, lng0: float, rows: int, cols: int) -> list[list[float | None]]:
+    """Mean night-time radiance in nW/(cm2 sr) per cell. Row 0 is the northern edge.
+
+    NASA GIBS serves the product as a grey-scale picture; its published colour map gives the
+    radiance range each grey level stands for, and the middle of that range is used. The
+    colour map tops out at about 38, so the very brightest cells are understated."""
+    cmap = _http.get(f"{GIBS}/colormaps/v1.3/VIIRS_DayNightBand_At_Sensor_Radiance.xml").text
+    levels = {}
+    for grey, low, high in re.findall(r'rgb="(\d+),\d+,\d+" transparent="false" sourceValue="\[([\d.]+),([\d.]+)\)"', cmap):
+        levels[int(grey)] = float(low) if float(high) > 1000 else (float(low) + float(high)) / 2
+    greys = sorted(levels)
+    totals = [[0.0] * cols for _ in range(rows)]
+    counts = [[0] * cols for _ in range(rows)]
+    for date in NIGHT_DATES:
+        r = _http.get(f"{GIBS}/wms/epsg4326/best/wms.cgi", params={
+            "SERVICE": "WMS", "REQUEST": "GetMap", "VERSION": "1.3.0", "LAYERS": NIGHT_LAYER, "CRS": "EPSG:4326",
+            "BBOX": f"{lat0},{lng0},{lat0 + rows * LAT_STEP},{lng0 + cols * LNG_STEP}",
+            "WIDTH": cols, "HEIGHT": rows, "FORMAT": "image/png", "TIME": date})
+        r.raise_for_status()
+        _, _, px = _png_rgba(r.content)
+        for i in range(rows):
+            for j in range(cols):
+                grey, alpha = px[(i * cols + j) * 4], px[(i * cols + j) * 4 + 3]
+                if alpha:
+                    totals[i][j] += levels[min(greys, key=lambda g: abs(g - grey))]
+                    counts[i][j] += 1
+    return [[totals[i][j] / counts[i][j] if counts[i][j] else None for j in range(cols)] for i in range(rows)]
 
 
 def stream_points() -> list[tuple[float, float]]:
@@ -120,6 +187,7 @@ def main() -> None:
     ndvi = raster("sentinel-2-l2a", SENTINEL_ITEM, bbox, rows, cols,
                   expression="(B08-B04)/(B08+B04)", asset_as_band="true")
     lwir = raster("landsat-c2-l2", LANDSAT_ITEM, bbox, rows, cols, assets="lwir11")
+    night = night_radiance(lat0, lng0, rows, cols)
     print("satellite rasters fetched")
 
     buckets: dict[tuple[int, int], list[tuple[float, float]]] = {}
@@ -142,7 +210,9 @@ def main() -> None:
         v, dn = ndvi[rows - 1 - i][j], lwir[rows - 1 - i][j]
         # Landsat Collection 2 surface temperature: Kelvin = DN * 0.00341802 + 149.0; DN 0 is no data.
         lst_f = round((dn * 0.00341802 + 149.0 - 273.15) * 9 / 5 + 32, 1) if dn else None
-        cells.append([i, j, None if v is None else round(v, 3), lst_f, round(nearest), round(dens * SQ_MILES_PER_CELL, 2)])
+        glow = night[rows - 1 - i][j]
+        cells.append([i, j, None if v is None else round(v, 3), lst_f, round(nearest),
+                      round(dens * SQ_MILES_PER_CELL, 2), None if glow is None else round(glow, 2)])
 
     DATA_FILE.parent.mkdir(exist_ok=True)
     DATA_FILE.write_text(json.dumps({
@@ -152,13 +222,17 @@ def main() -> None:
             "lst_f": f"Landsat Collection 2 Level 2 surface temperature {LANDSAT_ITEM} ({LANDSAT_ITEM[17:25]})",
             "stream_m": f"Town of Chapel Hill stream centerlines; distance capped at {STREAM_CAP_M} m",
             "population": "Town of Chapel Hill GIS Population_Density raster, assumed people per square mile",
+            "night_radiance": f"NASA Black Marble via GIBS, {NIGHT_LAYER}, mean of {len(NIGHT_DATES)} nights "
+                              f"({NIGHT_DATES[0]} to {NIGHT_DATES[-1]}), nW/(cm2 sr), about 500 m native resolution",
         },
         "frame": {"lat0": lat0, "lng0": lng0, "rows": rows, "cols": cols},
-        "columns": ["row", "col", "ndvi", "lst_f", "stream_m", "population"],
+        "columns": ["row", "col", "ndvi", "lst_f", "stream_m", "population", "night_radiance"],
         "cells": cells,
     }, separators=(",", ":")), encoding="utf-8")
     known = [c for c in cells if c[2] is not None and c[3] is not None]
     print(f"wrote {DATA_FILE} ({len(known)} of {len(cells)} cells have both NDVI and temperature)")
+    glows = [c[6] for c in cells if c[6] is not None]
+    print(f"night radiance {min(glows)}..{max(glows)} nW/(cm2 sr) on {len(glows)} cells")
     print(f"NDVI {min(c[2] for c in known)}..{max(c[2] for c in known)}, "
           f"surface temperature {min(c[3] for c in known)}..{max(c[3] for c in known)} F")
 

@@ -132,6 +132,7 @@ textarea {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
+.orb-capital_program { --orb: var(--aqua); }
 .orb-completed   { --orb: var(--leaf); }
 .orb-in_progress { --orb: var(--aqua); }
 .orb-proposed    { --orb: #ffc531; }

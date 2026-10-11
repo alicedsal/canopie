@@ -5,6 +5,8 @@ chapel-hill-spatial-gbdt-impact-engine on its own INITIAL_PROJECTS.
 """
 from .impact_engine import predict_impact
 
+PROTOTYPE_CEILING = 22_000_000  # the prototype's unsourced figure, used here only to compare formulas
+
 # (lat, lng, cost, fema, ncdot, canopy_sqft, retention_acres, bike_miles, units, lumens) -> (alignment, d_ndvi, d_lst_f)
 CASES = [
     ((35.9392, -79.0285, 4_850_000, True, False, 65_000, 4.2, 0.8, 0, 8_500), (71, 0.143, -4.5)),
@@ -18,7 +20,7 @@ KEYS = ["capital_cost", "fema", "ncdot", "canopy_sqft", "retention_acres", "bike
 
 if __name__ == "__main__":
     for args, expected in CASES:
-        out = predict_impact(args[:2], dict(zip(KEYS, args[2:])))
+        out = predict_impact(args[:2], dict(zip(KEYS, args[2:])), budget_ceiling=PROTOTYPE_CEILING)
         got = (out["alignment_score"], out["delta_ndvi"], out["delta_lst_f"])
         assert got == expected, (args, got, expected)
     print(f"{len(CASES)} cases match the TypeScript engine")

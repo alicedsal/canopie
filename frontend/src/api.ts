@@ -1,6 +1,6 @@
 const API = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
 
-export type Status = "completed" | "in_progress" | "proposed" | "rejected";
+export type Status = "capital_program" | "completed" | "in_progress" | "proposed" | "rejected";
 
 export interface Impact {
   approval_prob: number | null;
@@ -21,7 +21,7 @@ export interface Project extends Impact {
   district: string;
   lat: number;
   lng: number;
-  budget_usd: string;
+  budget_usd: number | null;
 }
 
 export interface Suggestion extends Impact {
@@ -87,6 +87,17 @@ export interface MetricPoint {
   avg_value: number;
   max_value: number;
 }
+
+export interface TownBudget {
+  bonds_2024: {
+    approved: string;
+    authorised_usd: number;
+    by_category_usd: Record<string, number>;
+    issued: { date: string; total_usd: number; by_category_usd: Record<string, number> };
+  };
+}
+
+export const getBudget = () => get<TownBudget>("/api/budget");
 
 export const getDistricts = () => get<District[]>("/api/districts");
 

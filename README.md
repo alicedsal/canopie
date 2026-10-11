@@ -4,7 +4,7 @@ a planning map for chapel hill, nc. it shows what the town has built and propose
 
 ## what it does
 
-- **maps projects.** completed, in-progress, proposed and rejected projects sit on a satellite map, with filters for each and a jump to any district.
+- **maps projects.** the town's named capital projects and any proposals you add sit on a satellite map, with filters for each and a jump to any district.
 - **shows where the need is.** a 100 m grid over the town is scored for heat, low tree canopy, flood risk and dark streets, and drawn as a layer on the map.
 - **suggests projects.** set a budget and a time span and it picks a set of projects that fits, each placed at the highest-need spot in its district. two lists are offered:
   - **best impact** ranks on six predicted outcomes (flood, heat, mobility, canopy, lighting, housing), weighted by local need and residents reached.
@@ -26,9 +26,10 @@ a planning map for chapel hill, nc. it shows what the town has built and propose
 | town limits | **real.** the town's own boundary; the grid is the 5,653 cells inside it. |
 | streams | **real.** the town stormwater division's stream centerlines; flood need is closeness to the nearest one. |
 | residents near a project | **real.** the town's population density map, summed within 500 m of each site. its unit is undocumented; people per square mile is assumed, which gives a town total of about 57,600. |
-| street lighting | **placeholder.** interpolated from six hand-entered district figures. no night-light data is loaded. |
-| projects on the map | **examples.** the seven seed projects are invented. the town's capital projects map layer needs a login, so it could not be loaded. |
-| project costs and sizes | **estimates.** typical figures chosen by hand in `backend/ml/priors.py`, not taken from town budgets. |
+| night-time light | **real.** nasa black marble (viirs day/night band), mean of six nights in june and july 2026. this is light seen from orbit at about 500 m resolution, so it stands in for street lighting only roughly, and parks and woods read as dark. |
+| budget | **real.** the slider is scaled to the town's 2024 bonds: $44 million approved by voters, $10.63 million issued in june 2025, from the town's capital improvements program page. |
+| projects on the map | **real names and locations, nothing else.** five of the six major projects the town names in its capital improvements program, placed using the town's gis. the town's page publishes no budget, status or dates for them, so the app shows "budget not published". fire apparatus replacement is on the town's list but has no location. |
+| suggested project costs and sizes | **estimates.** typical figures chosen by hand in `backend/ml/priors.py`, not taken from town budgets. |
 
 `docs/MODEL.md` goes through the model design document section by section: what is built, what is not, and what data each missing piece needs.
 
@@ -50,7 +51,7 @@ cp agent/.env.example agent/.env
 | `.env` | gemini api key | reading resident messages, the "why?" button, agent replies. without it the app still runs and messages are saved as neutral. |
 | `agent/.env` | photon spectrum project id and secret | the agent only. |
 
-**2. database.** this starts a local timescaledb and loads the schema and seed data on first run.
+**2. database.** this starts a local timescaledb and loads the schema, the town's five capital projects and four example messages on first run.
 
 ```bash
 docker compose up -d
@@ -102,6 +103,7 @@ npm run chat
                                                       v
  usgs gauge ── backend/ingest ──> tiger data (postgres + timescaledb)
  satellites, town gis ── backend/ingest ──> backend/ml/data/town_grid.json
+ town capital program ── backend/ingest ──> projects
                                     │   projects, districts
                                     │   observations + feedback hypertables
                                     │   continuous aggregates
@@ -120,7 +122,7 @@ npm run chat
 | `backend/app/` | fastapi: projects, need layer, metrics, survey, feedback, suggestions, agent endpoint. | |
 | `backend/app/services/gemini.py` | every gemini call: message analysis, rationales, agent replies. falls back quietly when rate limited. | gemini api |
 | `backend/ml/` | 100 m grid of measured values with neighbourhood features, need model, rule-based impact engine, ranking, survey data. | |
-| `backend/ingest/` | loaders for the usgs stream gauge and for the town grid (sentinel-2, landsat, town limits, streams, population). | |
+| `backend/ingest/` | loaders for the town grid (sentinel-2, landsat, viirs night lights, town limits, streams, population), the town's capital projects and the usgs stream gauge. sources are listed in `backend/ingest/README.md`. | |
 | `db/` | schema with hypertables, continuous aggregates and compression, plus seed data. | tiger data |
 | `agent/` | imessage agent on photon spectrum. `npm run chat` runs it in the terminal for testing without an apple device. | photon, community |
 | `chapel-hill-spatial-gbdt-impact-engine/` | the original standalone prototype of the scoring engine. the app does not run it; its formulas were ported to `backend/ml/impact_engine.py`. | |

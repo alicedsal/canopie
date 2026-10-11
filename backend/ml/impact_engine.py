@@ -11,8 +11,13 @@ when the town grid has been built (see `baseline` in predict_impact). Describe i
 """
 import math
 
+from .budget import BONDS_2024
+
 CHAPEL_HILL_CENTER = (35.9132, -79.0558)
-CIP_BUDGET_CEILING = 22_000_000
+# The town's capital capacity that a project's cost is measured against: the 2024 bonds
+# approved by voters. The prototype used an unsourced $22M figure; the parity test passes
+# that value explicitly so the formulas can still be checked against it.
+BUDGET_CEILING = BONDS_2024["authorised_usd"]
 
 # id: (lat, lng, baseline NDVI, baseline surface temp F, night radiance). Hand-entered by B.
 DISTRICTS = {
@@ -65,7 +70,8 @@ def location_features(loc: tuple[float, float]) -> dict:
     }
 
 
-def predict_impact(loc: tuple[float, float], p: dict, baseline: dict | None = None) -> dict:
+def predict_impact(loc: tuple[float, float], p: dict, baseline: dict | None = None,
+                   budget_ceiling: float = BUDGET_CEILING) -> dict:
     """p: capital_cost, fema, ncdot, canopy_sqft, retention_acres, bike_miles, affordable_units, lumens.
     baseline: measured ndvi / lst_f for the site (ml/grid.py). Without it the engine uses its
     own interpolated district figures, which is what the parity test checks."""
@@ -114,7 +120,7 @@ def predict_impact(loc: tuple[float, float], p: dict, baseline: dict | None = No
     gross = p["capital_cost"]
     grant = min(gross * 0.85, (gross * 0.75 if p["fema"] else 0) + (gross * 0.5 if p["ncdot"] else 0))
     net = gross - grant
-    cip_pct = net / CIP_BUDGET_CEILING * 100
+    cip_pct = net / budget_ceiling * 100
     fiscal = 80.0
     if cip_pct > 25:
         fiscal -= (cip_pct - 25) * 1.4
