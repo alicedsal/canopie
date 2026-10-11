@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot, aero option 1: translucent gel pie slice shaped like a map pin">
+  <defs>
+    <linearGradient id="e-gel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9BEBFF"/><stop offset="0.45" stop-color="#2EB3F2"/><stop offset="1" stop-color="#0A62CC"/></linearGradient>
+    <radialGradient id="e-glow" cx="120" cy="198" r="74" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C4FDFF" stop-opacity="0.95"/><stop offset="1" stop-color="#4FD0FF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="e-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF2B8"/><stop offset="1" stop-color="#F7A531"/></linearGradient>
+    <linearGradient id="e-cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9F3FF"/></linearGradient>
+    <linearGradient id="e-berry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F74EA"/><stop offset="1" stop-color="#0B3C9E"/></linearGradient>
+    <linearGradient id="e-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.95"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.05"/></linearGradient>
+    <radialGradient id="e-orb" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#8FBFFF"/><stop offset="0.5" stop-color="#2459D6"/><stop offset="1" stop-color="#0A2C86"/></radialGradient>
+    <linearGradient id="e-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCFF93"/><stop offset="1" stop-color="#34A62A"/></linearGradient>
+    <radialGradient id="e-shadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#19A9E5" stop-opacity="0.7"/><stop offset="1" stop-color="#19A9E5" stop-opacity="0"/></radialGradient>
+    <filter id="e-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="5"/></filter>
+    <filter id="e-blur1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <clipPath id="e-clip"><path d="M120 216 C108 216 100 206 94 194 L52 106 C40 80 60 56 120 56 C180 56 200 80 188 106 L146 194 C140 206 132 216 120 216 Z"/></clipPath>
+  </defs>
+
+  <ellipse cx="120" cy="224" rx="46" ry="9" fill="url(#e-shadow)"/>
+
+  <g>
+    <path d="M118 60 C112 38 126 24 146 22 C150 42 138 56 118 60 Z" fill="url(#e-leaf)"/>
+    <path d="M122 60 C104 54 96 38 100 22 C118 26 128 42 122 60 Z" fill="url(#e-leaf)"/>
+    <path d="M104 27 C110 32 114 40 116 50" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M142 27 C136 32 130 40 126 50" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <g clip-path="url(#e-clip)">
+    <rect x="30" y="40" width="180" height="190" fill="url(#e-gel)"/>
+    <path d="M40 106 Q120 62 200 106 L200 40 L40 40 Z" fill="url(#e-crust)"/>
+    <path d="M40 106 Q120 62 200 106 L200 120 Q120 76 40 120 Z" fill="url(#e-cream)"/>
+    <path d="M40 120 Q120 76 200 120 L200 138 Q120 94 40 138 Z" fill="url(#e-berry)" opacity="0.92"/>
+    <path d="M40 138 Q120 94 200 138 L200 148 Q120 104 40 148 Z" fill="url(#e-cream)" opacity="0.92"/>
+    <ellipse cx="120" cy="198" rx="74" ry="50" fill="url(#e-glow)"/>
+    <path d="M120 216 C108 216 100 206 94 194 L52 106 C40 80 60 56 120 56 C180 56 200 80 188 106 L146 194 C140 206 132 216 120 216 Z" fill="none" stroke="#073F9E" stroke-width="16" opacity="0.45" filter="url(#e-blur)"/>
+    <g fill="#FFFFFF" fill-opacity="0.18" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.2">
+      <circle cx="98" cy="176" r="4.500"/><circle cx="140" cy="178" r="3.500"/><circle cx="121" cy="198" r="3"/><circle cx="110" cy="188" r="2"/><circle cx="131" cy="190" r="2"/>
+    </g>
+    <path d="M60 86 C70 60 170 60 180 86 C150 72 90 72 60 86 Z" fill="url(#e-gloss)"/>
+    <path d="M66 110 C72 140 88 172 102 196" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.6" filter="url(#e-blur1)"/>
+  </g>
+  <path d="M120 216 C108 216 100 206 94 194 L52 106 C40 80 60 56 120 56 C180 56 200 80 188 106 L146 194 C140 206 132 216 120 216 Z" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.7"/>
+
+  <g>
+    <ellipse cx="106" cy="160" rx="5.500" ry="9" fill="#06235E"/><ellipse cx="134" cy="160" rx="5.500" ry="9" fill="#06235E"/>
+    <ellipse cx="104.500" cy="156" rx="2" ry="3.200" fill="#FFFFFF"/><ellipse cx="132.500" cy="156" rx="2" ry="3.200" fill="#FFFFFF"/>
+  </g>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.5" fill="#BDEFFF" fill-opacity="0.35">
+    <circle cx="40" cy="72" r="11"/><circle cx="26" cy="124" r="5"/><circle cx="206" cy="70" r="8"/><circle cx="214" cy="150" r="12"/><circle cx="56" cy="200" r="6"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.9"><ellipse cx="36" cy="67" rx="3.500" ry="2.200"/><ellipse cx="203" cy="66" rx="2.600" ry="1.600"/><ellipse cx="209" cy="144" rx="4" ry="2.400"/></g>
+</svg>

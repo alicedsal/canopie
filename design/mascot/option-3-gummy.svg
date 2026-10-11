@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot option 3: a glassy gummy pie slice on an app-icon tile">
+  <defs>
+    <linearGradient id="c-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3FBFF"/><stop offset="1" stop-color="#CFE9F8"/></linearGradient>
+    <linearGradient id="c-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE2F8"/><stop offset="0.55" stop-color="#7BAFD4"/><stop offset="1" stop-color="#4B8FC4"/></linearGradient>
+    <linearGradient id="c-berry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C9FE6"/><stop offset="1" stop-color="#3D5FAE"/></linearGradient>
+    <linearGradient id="c-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <filter id="c-soft" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#2F6FA8" flood-opacity="0.35"/></filter>
+    <clipPath id="c-clip"><path d="M70 82 Q120 62 170 82 Q188 90 179 107 L134 190 Q120 208 106 190 L61 107 Q52 90 70 82 Z"/></clipPath>
+  </defs>
+
+  <rect x="14" y="14" width="212" height="212" rx="48" fill="url(#c-sky)" stroke="#FFFFFF" stroke-width="3"/>
+
+  <g fill="#FFFFFF" fill-opacity="0.6" stroke="#FFFFFF" stroke-width="2">
+    <circle cx="44" cy="52" r="9"/><circle cx="196" cy="176" r="11"/><circle cx="204" cy="60" r="5"/><circle cx="40" cy="186" r="6"/>
+  </g>
+
+  <g filter="url(#c-soft)">
+    <path d="M70 82 Q120 62 170 82 Q188 90 179 107 L134 190 Q120 208 106 190 L61 107 Q52 90 70 82 Z" fill="url(#c-blue)"/>
+    <g clip-path="url(#c-clip)">
+      <path d="M40 136 q10 -9 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" fill="none" stroke="#FFF8E3" stroke-width="11" stroke-linecap="round"/>
+      <path d="M40 162 q10 -9 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0" fill="none" stroke="#FFF8E3" stroke-width="9" stroke-linecap="round"/>
+      <path d="M60 78 Q120 60 180 78 L176 104 Q120 84 64 104 Z" fill="url(#c-gloss)"/>
+      <path d="M72 100 L112 176" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" opacity="0.45"/>
+    </g>
+    <path d="M70 82 Q120 62 170 82 Q188 90 179 107 L134 190 Q120 208 106 190 L61 107 Q52 90 70 82 Z" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.9"/>
+  </g>
+
+  <g>
+    <circle cx="90" cy="72" r="10" fill="url(#c-berry)"/><circle cx="120" cy="64" r="11" fill="url(#c-berry)"/><circle cx="150" cy="72" r="10" fill="url(#c-berry)"/>
+    <g fill="#FFFFFF" opacity="0.85"><circle cx="86.500" cy="68.500" r="2.600"/><circle cx="116" cy="60" r="3"/><circle cx="146.500" cy="68.500" r="2.600"/></g>
+  </g>
+
+  <g>
+    <circle cx="104" cy="110" r="6.500" fill="#13294B"/><circle cx="136" cy="110" r="6.500" fill="#13294B"/>
+    <circle cx="106" cy="107.500" r="2.200" fill="#FFFFFF"/><circle cx="138" cy="107.500" r="2.200" fill="#FFFFFF"/>
+    <path d="M112 119 Q120 126 128 119" fill="none" stroke="#13294B" stroke-width="3.200" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot, aero option 3: a glossy blue orb with a pie slice emblem">
+  <defs>
+    <radialGradient id="g-ball" cx="120" cy="70" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8CE6FF"/><stop offset="0.5" stop-color="#1F97E6"/><stop offset="1" stop-color="#083F98"/></radialGradient>
+    <radialGradient id="g-glow" cx="120" cy="188" r="80" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#B4FBFF" stop-opacity="0.95"/><stop offset="1" stop-color="#4FD0FF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0.05"/></linearGradient>
+    <linearGradient id="g-ring" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#8DB9D8"/></linearGradient>
+    <linearGradient id="g-white" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#CBEBFF"/></linearGradient>
+    <linearGradient id="g-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF2B8"/><stop offset="1" stop-color="#F7A531"/></linearGradient>
+    <linearGradient id="g-leaf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCFF93"/><stop offset="1" stop-color="#34A62A"/></linearGradient>
+    <radialGradient id="g-shadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#19A9E5" stop-opacity="0.7"/><stop offset="1" stop-color="#19A9E5" stop-opacity="0"/></radialGradient>
+    <filter id="g-drop" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#062F7A" flood-opacity="0.45"/></filter>
+    <clipPath id="g-clip"><circle cx="120" cy="114" r="88"/></clipPath>
+    <clipPath id="g-wedge"><path d="M120 216 C108 216 100 206 94 194 L52 106 C40 80 60 56 120 56 C180 56 200 80 188 106 L146 194 C140 206 132 216 120 216 Z"/></clipPath>
+  </defs>
+
+  <ellipse cx="120" cy="218" rx="70" ry="10" fill="url(#g-shadow)"/>
+
+  <circle cx="120" cy="114" r="88" fill="url(#g-ball)"/>
+  <g clip-path="url(#g-clip)">
+    <ellipse cx="120" cy="188" rx="80" ry="44" fill="url(#g-glow)"/>
+  </g>
+
+  <g transform="translate(120 122) scale(0.6) translate(-120 -136)" filter="url(#g-drop)">
+    <g clip-path="url(#g-wedge)">
+      <rect x="30" y="40" width="180" height="190" fill="url(#g-white)"/>
+      <path d="M40 106 Q120 62 200 106 L200 40 L40 40 Z" fill="url(#g-crust)"/>
+      <path d="M40 124 Q120 80 200 124 L200 140 Q120 96 40 140 Z" fill="#1F97E6"/>
+      <path d="M40 152 Q120 108 200 152 L200 162 Q120 118 40 162 Z" fill="#1F97E6" opacity="0.6"/>
+    </g>
+    <ellipse cx="106" cy="166" rx="7" ry="11" fill="#083F98"/><ellipse cx="134" cy="166" rx="7" ry="11" fill="#083F98"/>
+    <ellipse cx="104" cy="161" rx="2.600" ry="4" fill="#FFFFFF"/><ellipse cx="132" cy="161" rx="2.600" ry="4" fill="#FFFFFF"/>
+    <path d="M118 60 C112 38 126 24 146 22 C150 42 138 56 118 60 Z" fill="url(#g-leaf)"/>
+    <path d="M122 60 C104 54 96 38 100 22 C118 26 128 42 122 60 Z" fill="url(#g-leaf)"/>
+  </g>
+
+  <g clip-path="url(#g-clip)">
+    <ellipse cx="120" cy="62" rx="74" ry="46" fill="url(#g-gloss)"/>
+  </g>
+  <circle cx="120" cy="114" r="88" fill="none" stroke="url(#g-ring)" stroke-width="6"/>
+  <circle cx="120" cy="114" r="91.500" fill="none" stroke="#3E7FAF" stroke-width="1" opacity="0.6"/>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.5" fill="#BDEFFF" fill-opacity="0.35">
+    <circle cx="24" cy="46" r="9"/><circle cx="218" cy="40" r="6"/><circle cx="226" cy="186" r="9"/><circle cx="18" cy="176" r="5"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.9"><ellipse cx="21" cy="42" rx="3" ry="1.800"/><ellipse cx="223" cy="182" rx="3" ry="1.800"/></g>
+</svg>

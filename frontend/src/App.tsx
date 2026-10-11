@@ -21,6 +21,22 @@ const NEED_LAYERS: { key: NeedDomain | "off"; label: string; color: string }[] =
   { key: "lighting", label: "Dark streets", color: "#3b3f8f" },
 ];
 
+// Decorative images from Wikimedia Commons, Category:Frutiger Aero. Mirrors public/decor/CREDITS.md.
+const IMAGE_CREDITS = [
+  { where: "Banner", title: "City of Nature 16 (Freedom of Expression)", author: "아사달 (Asadal)", licence: "CC BY 4.0",
+    licenceUrl: "https://creativecommons.org/licenses/by/4.0",
+    page: "https://commons.wikimedia.org/wiki/File:City_of_Nature_16_(Freedom_of_Expression).jpg",
+    changes: "Resized and cropped; title text overlaid." },
+  { where: "Footer strip", title: "Fresh nature 02 (hiry design)", author: "아사달 (Asadal)", licence: "CC BY 4.0",
+    licenceUrl: "https://creativecommons.org/licenses/by/4.0",
+    page: "https://commons.wikimedia.org/wiki/File:Fresh_nature_02_(hiry_design).jpg",
+    changes: "Resized and cropped." },
+  { where: "Title bar icon", title: "A simple globe", author: "Jhnri4", licence: "CC0",
+    licenceUrl: "https://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    page: "https://commons.wikimedia.org/wiki/File:A_simple_globe.png",
+    changes: "Resized." },
+];
+
 // The agent's phone number, from the Photon dashboard. Set VITE_AGENT_NUMBER in .env.local.
 const AGENT_NUMBER: string = import.meta.env.VITE_AGENT_NUMBER ?? "";
 
@@ -144,9 +160,19 @@ export default function App() {
         focus={focus}
       />
 
-      <aside className="glass sidebar">
-        <h1>Canopie</h1>
-        <p className="tagline">Chapel Hill, planned in the open.</p>
+      <aside className="sidebar">
+        <div className="titlebar">
+          <img src="/decor/globe.png" alt="" />
+          <span className="title">Canopie - Chapel Hill planning map</span>
+          <span className="caption-buttons" aria-hidden="true">
+            <i className="min" /><i className="max" /><i className="close" />
+          </span>
+        </div>
+        <div className="window-body">
+        <header className="banner">
+          <h1>Canopie</h1>
+          <p className="tagline">Chapel Hill, planned in the open.</p>
+        </header>
         {error && <p className="error">{error}</p>}
 
         <section>
@@ -331,6 +357,21 @@ export default function App() {
             ))}
           </ul>
         </section>
+        <footer className="credits">
+          <div className="strip" role="img" aria-label="Illustration of a seedling in a glass globe held over a city" />
+          <details>
+            <summary>Image credits</summary>
+            <ul>
+              {IMAGE_CREDITS.map((c) => (
+                <li key={c.page}>
+                  {c.where}: <a href={c.page} target="_blank" rel="noreferrer">{c.title}</a> by {c.author},{" "}
+                  <a href={c.licenceUrl} target="_blank" rel="noreferrer">{c.licence}</a>, via Wikimedia Commons. {c.changes}
+                </li>
+              ))}
+            </ul>
+          </details>
+        </footer>
+        </div>
       </aside>
     </div>
   );

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot, aero option 4: a blue gummy candy in the shape of a pie slice">
+  <defs>
+    <linearGradient id="h-gum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4DC3FF"/><stop offset="0.5" stop-color="#0E78E6"/><stop offset="1" stop-color="#0646B4"/></linearGradient>
+    <radialGradient id="h-glow" cx="120" cy="190" r="70" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8FF2FF" stop-opacity="0.95"/><stop offset="1" stop-color="#35B8FF" stop-opacity="0"/></radialGradient>
+    <radialGradient id="h-berry" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#7CD6FF"/><stop offset="0.5" stop-color="#1583EA"/><stop offset="1" stop-color="#063E9C"/></radialGradient>
+    <radialGradient id="h-shadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#19A9E5" stop-opacity="0.75"/><stop offset="1" stop-color="#19A9E5" stop-opacity="0"/></radialGradient>
+    <filter id="h-blur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="h-blur1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.8"/></filter>
+    <clipPath id="h-clip"><path d="M120 218 C104 218 96 208 90 196 L50 112 C36 82 58 60 120 60 C182 60 204 82 190 112 L150 196 C144 208 136 218 120 218 Z"/></clipPath>
+  </defs>
+
+  <ellipse cx="120" cy="226" rx="52" ry="10" fill="url(#h-shadow)"/>
+
+  <g>
+    <circle cx="90" cy="56" r="15" fill="url(#h-berry)"/><circle cx="150" cy="56" r="15" fill="url(#h-berry)"/><circle cx="120" cy="46" r="17" fill="url(#h-berry)"/>
+    <ellipse cx="84" cy="49" rx="5" ry="3" fill="#FFFFFF" opacity="0.9"/><ellipse cx="113" cy="38" rx="6" ry="3.500" fill="#FFFFFF" opacity="0.9"/><ellipse cx="144" cy="49" rx="5" ry="3" fill="#FFFFFF" opacity="0.9"/>
+  </g>
+
+  <g clip-path="url(#h-clip)">
+    <rect x="30" y="50" width="180" height="180" fill="url(#h-gum)"/>
+    <ellipse cx="120" cy="190" rx="70" ry="48" fill="url(#h-glow)"/>
+    <path d="M120 218 C104 218 96 208 90 196 L50 112 C36 82 58 60 120 60 C182 60 204 82 190 112 L150 196 C144 208 136 218 120 218 Z" fill="none" stroke="#04349A" stroke-width="20" opacity="0.5" filter="url(#h-blur)"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="M58 114 Q120 76 182 114" stroke="#04349A" stroke-width="5" opacity="0.28"/>
+      <path d="M58 110 Q120 72 182 110" stroke="#FFFFFF" stroke-width="3" opacity="0.4"/>
+      <path d="M70 140 Q120 108 170 140" stroke="#04349A" stroke-width="5" opacity="0.28"/>
+      <path d="M70 136 Q120 104 170 136" stroke="#FFFFFF" stroke-width="3" opacity="0.4"/>
+    </g>
+  </g>
+
+  <g filter="url(#h-blur1)" fill="#FFFFFF">
+    <path d="M72 84 C86 70 112 66 132 68 C112 72 90 80 78 94 C72 96 68 90 72 84 Z" opacity="0.95"/>
+    <ellipse cx="166" cy="92" rx="7" ry="4" transform="rotate(35 166 92)" opacity="0.8"/>
+    <path d="M70 124 C74 142 84 164 94 184" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
+    <ellipse cx="132" cy="204" rx="8" ry="3" opacity="0.5"/>
+  </g>
+
+  <g>
+    <ellipse cx="106" cy="166" rx="6" ry="10" fill="#031E5C"/><ellipse cx="134" cy="166" rx="6" ry="10" fill="#031E5C"/>
+    <ellipse cx="104.500" cy="161.500" rx="2.200" ry="3.600" fill="#FFFFFF"/><ellipse cx="132.500" cy="161.500" rx="2.200" ry="3.600" fill="#FFFFFF"/>
+  </g>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.5" fill="#BDEFFF" fill-opacity="0.35">
+    <circle cx="36" cy="88" r="10"/><circle cx="24" cy="140" r="5"/><circle cx="210" cy="96" r="7"/><circle cx="214" cy="166" r="11"/><circle cx="52" cy="204" r="6"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.9"><ellipse cx="32" cy="83" rx="3.200" ry="2"/><ellipse cx="209" cy="160" rx="3.600" ry="2.200"/></g>
+</svg>

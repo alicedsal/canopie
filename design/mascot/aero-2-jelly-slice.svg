@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot, aero option 2: a jelly pie slice with cream and a blueberry on top">
+  <defs>
+    <linearGradient id="f-top" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6FBFF"/><stop offset="1" stop-color="#6FD3FA"/></linearGradient>
+    <linearGradient id="f-gel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55CBFA"/><stop offset="1" stop-color="#0B6BD4"/></linearGradient>
+    <linearGradient id="f-cream" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#D9F3FF"/></linearGradient>
+    <linearGradient id="f-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A0"/><stop offset="1" stop-color="#F29E2B"/></linearGradient>
+    <radialGradient id="f-glow" cx="120" cy="168" r="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#C4FDFF" stop-opacity="0.85"/><stop offset="1" stop-color="#4FD0FF" stop-opacity="0"/></radialGradient>
+    <radialGradient id="f-orb" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#8FBFFF"/><stop offset="0.5" stop-color="#2459D6"/><stop offset="1" stop-color="#0A2C86"/></radialGradient>
+    <radialGradient id="f-whip" cx="0.4" cy="0.3" r="0.8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#CFEAF8"/></radialGradient>
+    <linearGradient id="f-gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient>
+    <radialGradient id="f-shadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#19A9E5" stop-opacity="0.65"/><stop offset="1" stop-color="#19A9E5" stop-opacity="0"/></radialGradient>
+    <filter id="f-blur1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.2"/></filter>
+    <clipPath id="f-side"><path d="M38 118 L208 104 L208 164 Q208 170 202 170.500 L46 183 Q38 183.500 38 176 Z"/></clipPath>
+  </defs>
+
+  <ellipse cx="124" cy="200" rx="96" ry="13" fill="url(#f-shadow)"/>
+
+  <path d="M38 118 L166 68 Q172 66 176 70 L208 104 Z" fill="url(#f-top)" stroke="url(#f-top)" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M70 110 L160 76 L174 90 Z" fill="#FFFFFF" opacity="0.55"/>
+
+  <g clip-path="url(#f-side)">
+    <path d="M38 118 L208 104 L208 190 L38 190 Z" fill="url(#f-gel)"/>
+    <path d="M38 118 L208 104 L208 115 L38 129 Z" fill="url(#f-cream)"/>
+    <path d="M38 158 L208 144 L208 152 L38 166 Z" fill="url(#f-cream)" opacity="0.92"/>
+    <path d="M38 166 L208 152 L208 190 L38 190 Z" fill="url(#f-crust)"/>
+    <ellipse cx="120" cy="168" rx="90" ry="40" fill="url(#f-glow)"/>
+    <g fill="#FFFFFF" fill-opacity="0.18" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.2">
+      <circle cx="62" cy="146" r="4"/><circle cx="74" cy="138" r="2.200"/><circle cx="170" cy="134" r="4.500"/><circle cx="188" cy="126" r="2.500"/><circle cx="156" cy="144" r="2.200"/>
+    </g>
+    <path d="M38 129 L208 115 L208 122 L38 136 Z" fill="url(#f-gloss)" opacity="0.6"/>
+    <path d="M47 126 L47 176" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.6" filter="url(#f-blur1)"/>
+  </g>
+  <path d="M38 118 L208 104 L208 164 Q208 170 202 170.500 L46 183 Q38 183.500 38 176 Z" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.65"/>
+
+  <g>
+    <circle cx="150" cy="82" r="14" fill="url(#f-whip)"/><circle cx="168" cy="88" r="11" fill="url(#f-whip)"/><circle cx="134" cy="90" r="10" fill="url(#f-whip)"/><circle cx="154" cy="68" r="11" fill="url(#f-whip)"/>
+    <circle cx="156" cy="52" r="11" fill="url(#f-orb)"/>
+    <ellipse cx="152" cy="47" rx="4" ry="2.600" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M160 43 C162 34 170 30 178 32" fill="none" stroke="#2E8B2A" stroke-width="2.500" stroke-linecap="round"/>
+    <path d="M178 32 C186 28 194 32 194 40 C186 42 180 38 178 32 Z" fill="#7BD64A"/>
+  </g>
+
+  <g>
+    <ellipse cx="100" cy="145" rx="5.500" ry="9" fill="#06235E"/><ellipse cx="130" cy="142.500" rx="5.500" ry="9" fill="#06235E"/>
+    <ellipse cx="98.500" cy="141" rx="2" ry="3.200" fill="#FFFFFF"/><ellipse cx="128.500" cy="138.500" rx="2" ry="3.200" fill="#FFFFFF"/>
+  </g>
+
+  <g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="1.5" fill="#BDEFFF" fill-opacity="0.35">
+    <circle cx="44" cy="70" r="12"/><circle cx="24" cy="100" r="5"/><circle cx="216" cy="62" r="8"/><circle cx="222" cy="140" r="6"/>
+  </g>
+  <g fill="#FFFFFF" opacity="0.9"><ellipse cx="40" cy="65" rx="4" ry="2.400"/><ellipse cx="213" cy="58" rx="2.600" ry="1.600"/></g>
+</svg>

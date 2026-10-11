@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Canopie mascot option 4: a pie slice standing up as a layered tree canopy">
+  <defs>
+    <linearGradient id="d-top" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9F7FE"/><stop offset="1" stop-color="#A9D4EE"/></linearGradient>
+    <linearGradient id="d-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9CCBEA"/><stop offset="1" stop-color="#7BAFD4"/></linearGradient>
+    <linearGradient id="d-low" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7C9FE6"/><stop offset="1" stop-color="#4466B0"/></linearGradient>
+    <linearGradient id="d-crust" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4DBA6"/><stop offset="1" stop-color="#D6A85E"/></linearGradient>
+    <filter id="d-soft" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#4B8FC4" flood-opacity="0.35"/></filter>
+    <clipPath id="d-clip"><path d="M120 32 Q127 32 131 41 L191 160 Q198 176 182 176 L58 176 Q42 176 49 160 L109 41 Q113 32 120 32 Z"/></clipPath>
+  </defs>
+
+  <ellipse cx="120" cy="212" rx="60" ry="8" fill="#7BAFD4" opacity="0.25"/>
+
+  <g fill="#CFE9F8" fill-opacity="0.55" stroke="#FFFFFF" stroke-width="2">
+    <circle cx="48" cy="60" r="10"/><circle cx="30" cy="112" r="5"/><circle cx="198" cy="52" r="7"/><circle cx="214" cy="118" r="9"/><circle cx="204" cy="196" r="5"/>
+  </g>
+  <g fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.9">
+    <path d="M42 55a7 7 0 0 1 6-3"/><path d="M208 113a6 6 0 0 1 6-3"/>
+  </g>
+
+  <rect x="108" y="170" width="24" height="38" rx="8" fill="url(#d-crust)" stroke="#B8853A" stroke-width="3"/>
+
+  <g filter="url(#d-soft)">
+    <g clip-path="url(#d-clip)">
+      <rect x="30" y="20" width="180" height="76" fill="url(#d-top)"/>
+      <rect x="30" y="92" width="180" height="46" fill="url(#d-mid)"/>
+      <rect x="30" y="134" width="180" height="30" fill="url(#d-low)"/>
+      <rect x="30" y="160" width="180" height="20" fill="url(#d-crust)"/>
+      <g fill="#FFF8E3">
+        <rect x="30" y="84" width="180" height="9"/>
+        <circle cx="92" cy="93" r="7.500"/><circle cx="106" cy="93" r="7.500"/><circle cx="120" cy="93" r="7.500"/><circle cx="134" cy="93" r="7.500"/><circle cx="148" cy="93" r="7.500"/>
+        <rect x="30" y="126" width="180" height="9"/>
+        <circle cx="71" cy="135" r="7.500"/><circle cx="85" cy="135" r="7.500"/><circle cx="99" cy="135" r="7.500"/><circle cx="113" cy="135" r="7.500"/><circle cx="127" cy="135" r="7.500"/><circle cx="141" cy="135" r="7.500"/><circle cx="155" cy="135" r="7.500"/><circle cx="169" cy="135" r="7.500"/>
+      </g>
+      <path d="M112 40 L56 160 L70 164 L122 44 Z" fill="#FFFFFF" opacity="0.3"/>
+    </g>
+    <path d="M120 32 Q127 32 131 41 L191 160 Q198 176 182 176 L58 176 Q42 176 49 160 L109 41 Q113 32 120 32 Z" fill="none" stroke="#2F6FA8" stroke-width="5" stroke-linejoin="round"/>
+  </g>
+
+  <g fill="#2B4688"><circle cx="118" cy="62" r="4.500"/><circle cx="76" cy="151" r="4"/><circle cx="104" cy="153" r="3.500"/><circle cx="140" cy="153" r="4"/><circle cx="166" cy="151" r="3.500"/></g>
+  <g fill="#FFFFFF" opacity="0.8"><circle cx="117" cy="61" r="1.300"/><circle cx="75" cy="150" r="1.200"/><circle cx="139" cy="152" r="1.200"/></g>
+
+  <g>
+    <ellipse cx="106" cy="110" rx="6.500" ry="7.500" fill="#13294B"/><ellipse cx="134" cy="110" rx="6.500" ry="7.500" fill="#13294B"/>
+    <circle cx="108.300" cy="107.300" r="2.400" fill="#FFFFFF"/><circle cx="136.300" cy="107.300" r="2.400" fill="#FFFFFF"/>
+    <path d="M112 119 Q120 126 128 119" fill="none" stroke="#13294B" stroke-width="3.200" stroke-linecap="round"/>
+    <ellipse cx="94" cy="118" rx="5.500" ry="3.200" fill="#F7B6C8" opacity="0.8"/><ellipse cx="146" cy="118" rx="5.500" ry="3.200" fill="#F7B6C8" opacity="0.8"/>
+  </g>
+</svg>

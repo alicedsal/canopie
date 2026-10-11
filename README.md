@@ -118,7 +118,7 @@ npm run chat
 
 | folder | what | track |
 | --- | --- | --- |
-| `frontend/` | react + vite + google maps. glass ui in `src/styles/aero.css`. | frutiger aero |
+| `frontend/` | react + vite + google maps. windows vista / 7 style window in `src/styles/aero.css`; decorative images and their credits in `public/decor/`. | frutiger aero |
 | `backend/app/` | fastapi: projects, need layer, metrics, survey, feedback, suggestions, agent endpoint. | |
 | `backend/app/services/gemini.py` | every gemini call: message analysis, rationales, agent replies. falls back quietly when rate limited. | gemini api |
 | `backend/ml/` | 100 m grid of measured values with neighbourhood features, need model, rule-based impact engine, ranking, survey data. | |
@@ -130,6 +130,10 @@ npm run chat
 | `docs/MODEL.md` | what the model is and is not. | |
 | `improvements_to_model.txt` | the model design document. | |
 | `2026chapelhill_findingsreport_062926.pdf` | the community survey report. | |
+
+## image credits
+
+the banner and footer illustrations are by 아사달 (asadal), licensed [cc by 4.0](https://creativecommons.org/licenses/by/4.0), and the title bar globe is by jhnri4 (cc0). all three come from wikimedia commons, category frutiger aero. full details, source links and the changes made are in `frontend/public/decor/CREDITS.md` and under "image credits" in the app. the window styling is original css and uses no microsoft artwork.
 
 ## built with
 
