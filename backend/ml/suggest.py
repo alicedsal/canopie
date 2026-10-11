@@ -8,6 +8,7 @@ from .grid import cells
 from .impact_engine import DISTRICTS, haversine_m, predict_impact
 from .need import blended, need_scores
 from .priors import CATEGORIES, SIZE_FIELDS
+from .survey import SURVEY, demand_weight
 
 MODEL_VERSION = "impact-engine-rules-2"
 
@@ -23,6 +24,9 @@ OUTCOME_SCALE = {"flood": 3.0,      # million gallons of runoff held back
                  "housing": 15.0}   # points of housing satisfaction
 # Outcomes the need model covers are weighted by local need (0.5x to 1.5x).
 NEED_DOMAIN = {"flood": "flood", "heat": "heat", "canopy": "canopy", "lighting": "lighting"}
+# "Constituent voice": the town-wide survey sets the baseline (0..1 per category) and each
+# resident message about that topic in that district adds this much on top.
+MESSAGE_WEIGHT = 0.5
 
 
 def predict(project: dict, district: dict) -> dict:
@@ -96,7 +100,8 @@ def _best_site(district: dict, need_weights: dict) -> tuple[dict, dict]:
 def suggest(districts: list[dict], demand: list[dict], *, budget: float, horizon_months: int,
             mode: str = "balanced") -> list[dict]:
     """districts: rows with lat / lng / population.
-    demand: rows of (district_id, topic, n) counted from constituent feedback."""
+    demand: rows of (district_id, topic, n) counted from constituent feedback (web form
+    and iMessage)."""
     asks = {(r["district_id"], r["topic"]): r["n"] for r in demand}
     candidates = []
     for d in districts:
@@ -108,9 +113,11 @@ def suggest(districts: list[dict], demand: list[dict], *, budget: float, horizon
                             "lat": site["lat"], "lng": site["lng"]}, d)
             benefit, contributions = rank(pred["outcomes"], need)
             mentions = asks.get((d["id"], cat), 0)
+            demand = demand_weight(cat) + MESSAGE_WEIGHT * mentions
             if mode == "constituent":
-                # Constituent demand and alignment only: no outcome or need term.
-                score = pred["approval_prob"] * mentions
+                # Constituent data and alignment only: survey priority plus local
+                # messages. No outcome or need term.
+                score = pred["approval_prob"] * demand
             else:
                 score = benefit * pred["constituents_affected"] / 1000 * (1 + 0.1 * mentions)
             if score <= 0:
@@ -121,7 +128,8 @@ def suggest(districts: list[dict], demand: list[dict], *, budget: float, horizon
                 "lat": site["lat"], "lng": site["lng"], "cell_id": site["cell_id"],
                 "budget_usd": template["cost"], "months": template["months"],
                 "grant_match_pct": round((1 - pred["town_cost_usd"] / template["cost"]) * 100),
-                "constituent_mentions": mentions, "score": round(score, 3),
+                "constituent_mentions": mentions, "constituent_demand": round(demand, 3),
+                "survey": SURVEY.get(cat), "score": round(score, 3),
                 "need": {k: round(v, 2) for k, v in need.items()},
                 "contributions": contributions, **pred,
             })

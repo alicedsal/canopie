@@ -78,7 +78,7 @@ API docs are at http://localhost:8000/docs once the backend is up.
 `GET /api/suggestions?budget=&horizon_months=&mode=`
 
 - `balanced`: six predicted outcomes (flood, heat, mobility, canopy, lighting, housing) combined with stated weights, adjusted by local need, x residents reached, with a small boost for constituent demand. Each suggestion is sited at the highest-need 100 m cell in its district and reports what it was ranked on.
-- `constituent`: alignment score x how many residents asked for it. Nothing else.
+- `constituent`: alignment score x resident demand. Demand is the category's priority in the 2026 Chapel Hill community survey (real figures, `backend/ml/survey.py`) plus messages received about that topic in that district through the web form or iMessage. Nothing else.
 
 The API field `approval_prob` holds the alignment score scaled to 0..1. It is not a probability of approval; the UI labels it "alignment".
 

@@ -16,6 +16,12 @@
 | 3.6 Project "dosage" features | Canopy added, retention added, bike length added, lighting, affordable units, scaled by budget. | `backend/ml/priors.py` |
 | 4. Targets relative to no-project baseline | Heat, NDVI and runoff change are reported against the same location with nothing built. | `backend/ml/suggest.py` (`predict`) |
 
+## Real data in the system
+
+The only measured data so far is the 2026 Town of Chapel Hill Community Survey (ETC Institute, 421 households), in `backend/ml/survey.py` with page references. It drives "Constituent voice": each project category takes the Importance-Satisfaction rating of the closest survey item as its town-wide baseline, and resident messages add to it per district. Two matches are weak and flagged in the file: tree planting uses the parks and greenways item as a proxy, and the housing rating is computed with the report's formula because the report does not publish one.
+
+The survey figures hard-coded in B's prototype (`SURVEY_2026_BENCHMARKS`: 1,284 respondents, housing as the top priority at 61% dissatisfied) do not match the report and are not used. The engine's "satisfaction shift" outputs were tuned to those figures, so they are not shown in the UI.
+
 ## What is not built, and what it would take
 
 | Document section | Status | Blocker |
