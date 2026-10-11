@@ -49,6 +49,7 @@ B's engine turned out to be rule-based scoring (hand-set formulas), not a traine
 - [ ] B: revoke the Google Maps key that was committed in `chapel-hill-spatial-gbdt-impact-engine/src/App.tsx` (removed from the file, still in git history)
 - [ ] Both: in the pitch, call it a rule-based impact scoring engine. Do not claim GBDT, training or SHAP.
 - [ ] Optional: reuse B's simulator panel and new-project form in `frontend/`
+- [x] Aligned with B's design document where the data allows: 100 m grid, spatial lags, separate need model, per-outcome ranking. `docs/MODEL.md` lists what is and is not built.
 
 ## Phase 2: location features on Tiger Data (B data, A database)
 
@@ -68,7 +69,7 @@ If B already has these features in files, load those files as they are. Do not r
 
 Checkpoint: the map shows where each kind of project would work best.
 
-- [ ] Effectiveness layer: pick a project type (trees, cool pavement, stormwater, lighting, bike/sidewalk), colour each cell by B's model score. Needs `GET /api/effectiveness?category=`.
+- [x] Need layer: heat, low canopy, flood, dark streets or overall, drawn as 100 m cells from `GET /api/need` (replaces the planned effectiveness layer)
 - [ ] Status filter chips for the project pins
 - [ ] Hand-enter 8 to 12 real Chapel Hill projects (done, in progress, proposed) from the town's capital plan into `db/02_seed.sql`, replacing the invented ones. Context for the map only, not training data.
 - [ ] Project detail view: budget, dates, description, model score at that location, residents affected

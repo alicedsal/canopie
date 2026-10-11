@@ -36,11 +36,23 @@ export interface Suggestion extends Impact {
   constituent_mentions: number;
   score: number;
   goals: Record<string, number>;
+  contributions: Record<string, number>;
   survey_delta_pct: Record<string, number>;
   rationale?: string;
 }
 
 export type Mode = "balanced" | "constituent";
+
+export type NeedDomain = "overall" | "heat" | "canopy" | "flood" | "lighting";
+
+export interface NeedCell {
+  cell_id: string;
+  score: number;
+  south: number;
+  north: number;
+  west: number;
+  east: number;
+}
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(API + path);
@@ -50,16 +62,26 @@ async function get<T>(path: string): Promise<T> {
 
 export const getProjects = () => get<Project[]>("/api/projects");
 
+export const getNeed = (domain: NeedDomain) =>
+  get<{ cells: NeedCell[]; total_cells: number }>(`/api/need?domain=${domain}`);
+
 export const getSuggestions = (budget: number, horizonMonths: number, mode: Mode) =>
   get<{ spent: number; suggestions: Suggestion[] }>(
     `/api/suggestions?budget=${budget}&horizon_months=${horizonMonths}&mode=${mode}`,
   );
 
-export async function postFeedback(body: string): Promise<void> {
+export interface FeedbackResult {
+  sentiment: number;
+  topics: string[];
+  district: string | null;
+}
+
+export async function postFeedback(body: string): Promise<FeedbackResult> {
   const res = await fetch(API + "/api/feedback", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ body, channel: "web" }),
   });
   if (!res.ok) throw new Error(`feedback: ${res.status}`);
+  return res.json();
 }

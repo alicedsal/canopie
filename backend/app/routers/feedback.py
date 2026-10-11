@@ -37,7 +37,7 @@ async def store_feedback(fb: FeedbackIn) -> dict:
         (fb.channel, hash_sender(fb.sender), district_id, fb.project_id, fb.body,
          analysis["sentiment"], analysis["topics"]),
     )
-    return {**row, "intent": analysis["intent"]}
+    return {**row, "district": analysis["district"], "intent": analysis["intent"]}
 
 
 @router.post("/feedback")

@@ -1,7 +1,8 @@
 import { AdvancedMarker, APIProvider, InfoWindow, Map } from "@vis.gl/react-google-maps";
 import { useState } from "react";
 
-import type { Impact, Project, Suggestion } from "../api";
+import type { Impact, NeedCell, Project, Suggestion } from "../api";
+import NeedLayer from "./NeedLayer";
 
 const CHAPEL_HILL = { lat: 35.9304, lng: -79.0455 };
 
@@ -20,7 +21,14 @@ const toPins = (projects: Project[], suggestions: Suggestion[]): Pin[] => [
   ...suggestions.map((s, i) => ({ ...s, key: `s${i}`, kind: "suggested", budget: s.budget_usd })),
 ];
 
-export default function MapView({ projects, suggestions }: { projects: Project[]; suggestions: Suggestion[] }) {
+interface Props {
+  projects: Project[];
+  suggestions: Suggestion[];
+  needCells: NeedCell[];
+  needColor: string;
+}
+
+export default function MapView({ projects, suggestions, needCells, needColor }: Props) {
   const [selected, setSelected] = useState<Pin | null>(null);
   const pins = toPins(projects, suggestions);
 
@@ -35,6 +43,7 @@ export default function MapView({ projects, suggestions }: { projects: Project[]
         gestureHandling="greedy"
         disableDefaultUI
       >
+        <NeedLayer cells={needCells} color={needColor} />
         {pins.map((pin) => (
           <AdvancedMarker key={pin.key} position={pin} onClick={() => setSelected(pin)}>
             <div className={`orb orb-${pin.kind}`} title={pin.title} />

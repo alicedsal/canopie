@@ -20,18 +20,23 @@ TOPICS = [*CATEGORIES, "other"]
 
 
 async def _generate(contents: str, config: dict | None = None) -> str | None:
-    """One Gemini call with a few retries. Returns None if Gemini is unavailable (no key,
-    503 under load, free-tier rate limit) so callers fall back instead of failing the request."""
+    """One Gemini call, retried once. Returns None if Gemini is unavailable (no key, 503
+    under load, free-tier rate limit, slow) so callers fall back instead of failing or
+    hanging the request."""
     if _client is None:
         return None
-    for attempt in range(3):
+    for attempt in range(2):
         try:
-            resp = await _client.aio.models.generate_content(
-                model=settings.gemini_model, contents=contents, config=config)
+            resp = await asyncio.wait_for(
+                _client.aio.models.generate_content(
+                    model=settings.gemini_model, contents=contents, config=config),
+                timeout=12)
             return resp.text
         except Exception as exc:
             print(f"gemini attempt {attempt + 1} failed: {str(exc)[:120]}")
-            await asyncio.sleep(2 * (attempt + 1))
+            if "RESOURCE_EXHAUSTED" in str(exc):
+                return None  # rate limited: waiting a second will not help
+            await asyncio.sleep(1)
     return None
 
 

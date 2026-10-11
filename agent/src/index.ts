@@ -2,21 +2,22 @@
 // Thin on purpose: every message goes to the backend, which logs it as constituent
 // feedback (Gemini sentiment + topic + district) and returns the reply to send.
 import { Spectrum } from "spectrum-ts";
-import { imessage } from "spectrum-ts/providers/imessage";
+import { imessage, terminal } from "spectrum-ts/providers";
 
 const API = process.env.CANOPY_API_URL ?? "http://localhost:8000";
 
 const app = await Spectrum({
   projectId: process.env.SPECTRUM_PROJECT_ID!,
   projectSecret: process.env.SPECTRUM_PROJECT_SECRET!,
-  // Spectrum also ships a terminal provider for testing without a phone; see
-  // https://photon.codes/docs/spectrum-ts/providers
-  providers: [imessage.config()],
+  // `npm run chat` swaps iMessage for Spectrum's terminal provider, so the whole loop
+  // can be tested by typing, with no Apple device.
+  providers: [process.env.CANOPY_TERMINAL ? terminal.config() : imessage.config()],
 });
 
 console.log("Canopy agent listening");
 
 for await (const [space, message] of app.messages) {
+  console.log(`in  [${message.platform}] ${message.content.type}`);
   if (message.content.type !== "text") continue;
   const text = message.content.text;
 
@@ -33,6 +34,7 @@ for await (const [space, message] of app.messages) {
       if (!res.ok) throw new Error(`backend ${res.status}`);
       const { reply } = (await res.json()) as { reply: string };
       await message.reply(reply);
+      console.log(`out ${reply.slice(0, 60)}`);
     } catch (err) {
       console.error(err);
       await message.reply("Sorry, Canopy is having trouble right now. Please try again in a bit.");

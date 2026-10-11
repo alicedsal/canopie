@@ -26,12 +26,13 @@ A planning map for Chapel Hill, NC. It plots what the town has built and what ha
 | `frontend/` | React + Vite + `@vis.gl/react-google-maps`, glass UI in `src/styles/aero.css` | Frutiger Aero |
 | `backend/app/` | FastAPI: projects, metrics, feedback, suggestions, agent endpoint | |
 | `backend/app/services/gemini.py` | Sentiment and topic extraction, rationales, agent replies | Gemini |
-| `backend/ml/` | Rule-based impact engine (Python port of B's), project templates, budget selection | |
+| `backend/ml/` | 100 m grid with spatial lag features, need model, rule-based impact engine (Python port of B's), transparent ranking. See `docs/MODEL.md`. | |
 | `chapel-hill-spatial-gbdt-impact-engine/` | B's original standalone prototype of the engine and a simulator UI. The app does not run it; kept for reference and UI parts. | |
 | `backend/ingest/` | Loaders for NWIS, Sentinel-2, Landsat, town GIS | |
 | `db/` | Schema with hypertables, continuous aggregates, compression | Tiger Data |
 | `agent/` | iMessage agent on Spectrum, forwards to the backend | Photon, Community |
 | `docs/PLAN.md` | Build plan, step by step | |
+| `docs/MODEL.md` | What the model is, and how it compares with `improvements_to_model.txt` | |
 
 ## Run it
 
@@ -76,7 +77,7 @@ API docs are at http://localhost:8000/docs once the backend is up.
 
 `GET /api/suggestions?budget=&horizon_months=&mode=`
 
-- `balanced`: how much the project raises the engine's council-goal alignment score at that location x residents reached, with a small boost for constituent demand.
+- `balanced`: six predicted outcomes (flood, heat, mobility, canopy, lighting, housing) combined with stated weights, adjusted by local need, x residents reached, with a small boost for constituent demand. Each suggestion is sited at the highest-need 100 m cell in its district and reports what it was ranked on.
 - `constituent`: alignment score x how many residents asked for it. Nothing else.
 
 The API field `approval_prob` holds the alignment score scaled to 0..1. It is not a probability of approval; the UI labels it "alignment".

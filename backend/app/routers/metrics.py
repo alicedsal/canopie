@@ -1,4 +1,9 @@
+from typing import Literal
+
 from fastapi import APIRouter
+
+from ml.grid import CELL_M, cell_bounds, cells
+from ml.need import need_scores
 
 from ..db import fetch_all
 
@@ -35,3 +40,16 @@ async def sentiment(days: int = 90):
         """,
         (days,),
     )
+
+
+@router.get("/need")
+async def need_layer(domain: Literal["overall", "heat", "canopy", "flood", "lighting"] = "overall",
+                     limit: int = 700):
+    """Highest-need 100 m cells for one domain, for the map layer."""
+    grid, scores = cells(), need_scores()
+    top = sorted(grid, key=lambda key: scores[key][domain], reverse=True)[:limit]
+    return {
+        "domain": domain, "cell_m": CELL_M, "total_cells": len(grid),
+        "cells": [{"cell_id": grid[k]["cell_id"], "score": round(scores[k][domain], 3),
+                   "district": grid[k]["district"], **cell_bounds(grid[k])} for k in top],
+    }
