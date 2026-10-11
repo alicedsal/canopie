@@ -25,7 +25,8 @@ async def get_suggestions(
     explain: bool = False,
 ):
     """balanced: alignment uplift (rule-based impact engine) x residents reached.
-    constituent: alignment x how many residents asked for it, nothing else."""
+    constituent: alignment x resident demand (2026 community survey priority plus
+    messages received about that topic in that district), nothing else."""
     districts = await fetch_all("SELECT * FROM districts ORDER BY id")
     demand = await fetch_all(_TOPIC_DEMAND)
     picks = suggest(districts, demand, budget=budget, horizon_months=horizon_months, mode=mode)

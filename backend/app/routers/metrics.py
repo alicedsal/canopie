@@ -4,6 +4,8 @@ from fastapi import APIRouter
 
 from ml.grid import CELL_M, cell_bounds, cells
 from ml.need import need_scores
+from ml.priors import CATEGORIES
+from ml.survey import SOURCE, SURVEY, demand_weight
 
 from ..db import fetch_all
 
@@ -53,3 +55,11 @@ async def need_layer(domain: Literal["overall", "heat", "canopy", "flood", "ligh
         "cells": [{"cell_id": grid[k]["cell_id"], "score": round(scores[k][domain], 3),
                    "district": grid[k]["district"], **cell_bounds(grid[k])} for k in top],
     }
+
+
+@router.get("/survey")
+async def survey():
+    """2026 community survey priorities matched to project categories, highest first."""
+    items = [{"category": cat, "label": CATEGORIES[cat]["label"], "demand_weight": round(demand_weight(cat), 3), **s}
+             for cat, s in SURVEY.items()]
+    return {"source": SOURCE, "items": sorted(items, key=lambda i: i["is_score"], reverse=True)}

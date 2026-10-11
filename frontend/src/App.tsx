@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import {
-  getNeed, getProjects, getSuggestions, postFeedback,
-  type Mode, type NeedCell, type NeedDomain, type Project, type Suggestion,
+  getNeed, getProjects, getSuggestions, getSurvey, postFeedback,
+  type Mode, type NeedCell, type NeedDomain, type Project, type Suggestion, type SurveyItem,
 } from "./api";
 import MapView from "./components/MapView";
 
@@ -29,10 +29,12 @@ export default function App() {
   const [refresh, setRefresh] = useState(0);
   const [needLayer, setNeedLayer] = useState<NeedDomain | "off">("off");
   const [needCells, setNeedCells] = useState<NeedCell[]>([]);
+  const [survey, setSurvey] = useState<SurveyItem[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     getProjects().then(setProjects).catch((e) => setError(String(e)));
+    getSurvey().then((r) => setSurvey(r.items)).catch((e) => setError(String(e)));
   }, []);
 
   useEffect(() => {
@@ -126,18 +128,38 @@ export default function App() {
                   alignment {Math.round((s.approval_prob ?? 0) * 100)}/100
                 </span>
                 <span>
-                  {s.constituents_affected?.toLocaleString()} residents · {s.constituent_mentions} asked for this ·{" "}
-                  satisfaction {s.survey_delta_pct.overall >= 0 ? "+" : ""}{s.survey_delta_pct.overall} pts
+                  {s.constituents_affected?.toLocaleString()} residents · {s.constituent_mentions} asked for this
                 </span>
+                {mode === "constituent" && s.survey && (
+                  <span>
+                    2026 survey: {s.survey.priority} priority · {s.survey.importance}% want more emphasis ·{" "}
+                    {s.survey.satisfaction}% satisfied
+                  </span>
+                )}
                 <span>
                   Ranked on:{" "}
                   {Object.entries(s.contributions).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])
-                    .slice(0, 3).map(([k]) => k).join(", ") || "resident requests"}
+                    .slice(0, 3).map(([k]) => k).join(", ") || "resident demand"}
                 </span>
               </li>
             ))}
           </ul>
         </section>
+
+        {mode === "constituent" && (
+          <section>
+            <h2>What residents said (2026 survey, 421 households)</h2>
+            <ul className="cards">
+              {survey.map((s) => (
+                <li key={s.item} className="glass card">
+                  <strong>{s.label}: {s.priority}</strong>
+                  <span>{s.item}</span>
+                  <span>{s.importance}% want more emphasis · {s.satisfaction}% satisfied</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section>
           <h2>Tell the town</h2>

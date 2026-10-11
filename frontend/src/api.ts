@@ -37,11 +37,22 @@ export interface Suggestion extends Impact {
   score: number;
   goals: Record<string, number>;
   contributions: Record<string, number>;
+  survey: SurveyItem | null;
   survey_delta_pct: Record<string, number>;
   rationale?: string;
 }
 
 export type Mode = "balanced" | "constituent";
+
+export interface SurveyItem {
+  item: string;
+  importance: number;
+  satisfaction: number;
+  is_score: number;
+  priority: string;
+  note: string | null;
+  label?: string;
+}
 
 export type NeedDomain = "overall" | "heat" | "canopy" | "flood" | "lighting";
 
@@ -61,6 +72,9 @@ async function get<T>(path: string): Promise<T> {
 }
 
 export const getProjects = () => get<Project[]>("/api/projects");
+
+export const getSurvey = () =>
+  get<{ source: { title: string; sample_size: number }; items: SurveyItem[] }>("/api/survey");
 
 export const getNeed = (domain: NeedDomain) =>
   get<{ cells: NeedCell[]; total_cells: number }>(`/api/need?domain=${domain}`);
