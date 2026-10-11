@@ -7,8 +7,8 @@ import { imessage } from "spectrum-ts/providers/imessage";
 const API = process.env.CANOPY_API_URL ?? "http://localhost:8000";
 
 const app = await Spectrum({
-  projectId: process.env.PROJECT_ID!,
-  projectSecret: process.env.PROJECT_SECRET!,
+  projectId: process.env.SPECTRUM_PROJECT_ID!,
+  projectSecret: process.env.SPECTRUM_PROJECT_SECRET!,
   // Spectrum also ships a terminal provider for testing without a phone; see
   // https://photon.codes/docs/spectrum-ts/providers
   providers: [imessage.config()],
@@ -18,6 +18,7 @@ console.log("Canopy agent listening");
 
 for await (const [space, message] of app.messages) {
   if (message.content.type !== "text") continue;
+  const text = message.content.text;
 
   await space.responding(async () => {
     try {
@@ -26,7 +27,7 @@ for await (const [space, message] of app.messages) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sender: message.sender?.id ?? "unknown",
-          text: message.content.text,
+          text,
         }),
       });
       if (!res.ok) throw new Error(`backend ${res.status}`);
