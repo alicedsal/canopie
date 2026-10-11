@@ -1,0 +1,6 @@
+{
+  "name": "Chapel Hill Spatial GBDT Impact Engine",
+  "description": "Spatially Aware Gradient Boosting (XGBoost/LightGBM) model integrating Google Maps Platform, Sentinel-2 NDVI, Landsat-9 LST, VIIRS radiance, and municipal data to predict community and environmental impacts for Chapel Hill, NC.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
