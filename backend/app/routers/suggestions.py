@@ -44,4 +44,4 @@ async def get_suggestions(
         for p in picks:
             p["rationale"] = await gemini.write_rationale(p)
     return {"budget": budget, "horizon_months": horizon_months, "mode": mode,
-            "spent": sum(p["budget_usd"] for p in picks), "suggestions": picks}
+            "spent": sum(p["town_cost_usd"] for p in picks), "suggestions": picks}
