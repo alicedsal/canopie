@@ -28,6 +28,8 @@ export interface Suggestion extends Impact {
   title: string;
   category: string;
   district: string;
+  district_id: number;
+  grant_match_pct: number;
   lat: number;
   lng: number;
   budget_usd: number;
@@ -72,6 +74,56 @@ async function get<T>(path: string): Promise<T> {
 }
 
 export const getProjects = () => get<Project[]>("/api/projects");
+
+export interface District {
+  id: number;
+  name: string;
+  lat: number;
+  lng: number;
+}
+
+export interface MetricPoint {
+  day: string;
+  avg_value: number;
+  max_value: number;
+}
+
+export const getDistricts = () => get<District[]>("/api/districts");
+
+export const getMetrics = (districtId: number, metric: string, days: number) =>
+  get<MetricPoint[]>(`/api/districts/${districtId}/metrics?metric=${metric}&days=${days}`);
+
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(API + path, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`${path}: ${res.status}`);
+  return res.json();
+}
+
+export const postRationale = (s: Suggestion) =>
+  post<{ rationale: string }>("/api/rationale", s).then((r) => r.rationale);
+
+export const addProposal = (s: Suggestion) =>
+  post<Project>("/api/projects", {
+    title: s.title, category: s.category, district_id: s.district_id, lat: s.lat, lng: s.lng,
+    budget_usd: s.budget_usd, grant_match_pct: s.grant_match_pct,
+    description: "Suggested by the planning tool and added to proposals.",
+  });
+
+export interface FeedbackItem {
+  id: string;
+  time: string;
+  channel: string;
+  body: string;
+  sentiment: number;
+  topics: string[];
+  district: string | null;
+}
+
+export const getFeedback = () => get<FeedbackItem[]>("/api/feedback?limit=8");
 
 export const getSurvey = () =>
   get<{ source: { title: string; sample_size: number }; items: SurveyItem[] }>("/api/survey");

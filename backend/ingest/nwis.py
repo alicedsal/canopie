@@ -3,8 +3,8 @@
     python -m ingest.nwis            # last 7 days
     python -m ingest.nwis P30D       # ISO-8601 period
 
-Site and district come from the team's API notes; confirm the site number on
-waterdata.usgs.gov before the demo.
+Site 02097386 is "Booker Creek at SR 1751 near Chapel Hill, NC". (The number in the
+team's early notes, 02097000, is the Haw River near Pittsboro and returns nothing.)
 """
 import sys
 
@@ -13,7 +13,7 @@ import psycopg
 
 from app.config import settings
 
-SITE = "02097000"
+SITE = "02097386"
 DISTRICT = "Booker Creek"
 # USGS parameter codes
 PARAMS = {"00065": "gauge_height_ft", "00060": "discharge_cfs"}
@@ -38,6 +38,10 @@ def main(period: str = "P7D") -> None:
                 "ON CONFLICT DO NOTHING",
                 [(t, district_id, m, v) for t, m, v in rows],
             )
+    # Backfilled rows only reach the dashboard's daily aggregate after a refresh, and a
+    # refresh cannot run inside a transaction.
+    with psycopg.connect(settings.database_url, autocommit=True) as conn:
+        conn.execute("CALL refresh_continuous_aggregate('observations_daily', now() - INTERVAL '60 days', now())")
     print(f"{len(rows)} gauge readings fetched for site {SITE}")
 
 

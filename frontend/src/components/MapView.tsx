@@ -1,5 +1,5 @@
-import { AdvancedMarker, APIProvider, InfoWindow, Map } from "@vis.gl/react-google-maps";
-import { useState } from "react";
+import { AdvancedMarker, APIProvider, InfoWindow, Map, useMap } from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
 
 import type { Impact, NeedCell, Project, Suggestion } from "../api";
 import NeedLayer from "./NeedLayer";
@@ -9,6 +9,7 @@ const CHAPEL_HILL = { lat: 35.9304, lng: -79.0455 };
 interface Pin extends Impact {
   key: string;
   title: string;
+  description?: string;
   kind: string; // project status, or "suggested"
   lat: number;
   lng: number;
@@ -26,9 +27,20 @@ interface Props {
   suggestions: Suggestion[];
   needCells: NeedCell[];
   needColor: string;
+  focus: { lat: number; lng: number } | null;
 }
 
-export default function MapView({ projects, suggestions, needCells, needColor }: Props) {
+function FlyTo({ focus }: { focus: Props["focus"] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!map || !focus) return;
+    map.panTo(focus);
+    map.setZoom(16);
+  }, [map, focus]);
+  return null;
+}
+
+export default function MapView({ projects, suggestions, needCells, needColor, focus }: Props) {
   const [selected, setSelected] = useState<Pin | null>(null);
   const pins = toPins(projects, suggestions);
 
@@ -44,6 +56,7 @@ export default function MapView({ projects, suggestions, needCells, needColor }:
         disableDefaultUI
       >
         <NeedLayer cells={needCells} color={needColor} />
+        <FlyTo focus={focus} />
         {pins.map((pin) => (
           <AdvancedMarker key={pin.key} position={pin} onClick={() => setSelected(pin)}>
             <div className={`orb orb-${pin.kind}`} title={pin.title} />
@@ -56,6 +69,7 @@ export default function MapView({ projects, suggestions, needCells, needColor }:
               <div>
                 {selected.kind.replace("_", " ")} · {selected.district} · ${selected.budget.toLocaleString()}
               </div>
+              {selected.description && <div>{selected.description}</div>}
               {selected.approval_prob != null && (
                 <ul>
                   <li>Council-goal alignment: {Math.round(selected.approval_prob * 100)}/100</li>

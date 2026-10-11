@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vis.gl/react-google-maps": "^1.10.1",
+    "qrcode.react": "^4.2.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

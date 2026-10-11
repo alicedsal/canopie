@@ -35,7 +35,8 @@ Roles after the change (swap if this is wrong): **B** owns the model and the loc
 - [x] Keys: Google Maps, Gemini, Photon, Tiger Cloud
 - [x] Docker database up, backend and frontend running, seed pins on the map
 - [x] API contract: decided. The API already in the repo stays as it is (`frontend/src/api.ts` and the output of `predict()` in `backend/ml/suggest.py`). Nothing waits on a negotiation.
-- [ ] Paste the keys into the local env files (`.env`, `frontend/.env.local`, `agent/.env`) and delete them from the shared Google Doc
+- [x] Keys pasted into the local env files (`.env`, `frontend/.env.local`, `agent/.env`)
+- [ ] Delete the keys from the shared Google Doc
 - [ ] Pick a name (can wait until the Devpost write-up)
 
 ## Phase 1: B's engine in the app (done)
@@ -55,12 +56,12 @@ B's engine turned out to be rule-based scoring (hand-set formulas), not a traine
 
 Checkpoint: every map cell has the features the model needs, stored in Tiger Data.
 
-- [ ] Both: fix the spatial unit to whatever B's model uses; add a `cells` table (id, lat, lng, district, population) if it is finer than districts
+- [x] Spatial unit fixed at 100 m cells (`backend/ml/grid.py`, in memory; a `cells` table in Tiger Data is optional)
 - [ ] B: load population (Census ACS block groups) into the database
 - [ ] B: load the geospatial features the model uses (NDVI from Sentinel-2, surface temperature from Landsat, others) into `observations`, keyed by cell or district
-- [ ] A: run `python -m ingest.nwis P30D` for the Booker Creek gauge and fix whatever the live API disagrees with
-- [ ] A: run `db/01_schema.sql` on the Tiger Cloud service and point `DATABASE_URL` at it
-- [ ] A: district panel with NDVI and temperature charts from `/api/districts/{id}/metrics`
+- [x] A: 30 days of real Booker Creek gauge readings loaded (USGS 02097386; the 02097000 in the early notes is the Haw River)
+- [x] A: schema and seed loaded on the Tiger Cloud service; `DATABASE_URL` points at it
+- [x] A: Booker Creek gauge chart in the sidebar, read from the `observations_daily` continuous aggregate
 - [ ] Note for the pitch: row count, compression ratio, raw versus aggregate query time
 
 If B already has these features in files, load those files as they are. Do not rebuild the pipeline.
@@ -70,40 +71,41 @@ If B already has these features in files, load those files as they are. Do not r
 Checkpoint: the map shows where each kind of project would work best.
 
 - [x] Need layer: heat, low canopy, flood, dark streets or overall, drawn as 100 m cells from `GET /api/need` (replaces the planned effectiveness layer)
-- [ ] Status filter chips for the project pins
+- [x] Status filter chips for the project pins
 - [ ] Hand-enter 8 to 12 real Chapel Hill projects (done, in progress, proposed) from the town's capital plan into `db/02_seed.sql`, replacing the invented ones. Context for the map only, not training data.
-- [ ] Project detail view: budget, dates, description, model score at that location, residents affected
-- [ ] District fly-to buttons
+- [x] Project popup: status, district, budget, description, and scores where available
+- [x] District fly-to buttons, and a Show button on each suggestion
 
 ## Phase 4: constituent voice with Gemini (A)
 
 Checkpoint: submit a message on the web form, watch it get classified and appear.
 
-- [ ] Put the Gemini key in `.env`, test `POST /api/feedback` with a dozen varied messages, tune the prompt until topics and districts are right
-- [ ] Feedback feed with sentiment colour and topic chips
+- [x] Gemini key in `.env`; `POST /api/feedback` classifies topic, district and sentiment correctly on the messages tried
+- [x] Feedback feed with sentiment colour and topics, refreshing every 8 seconds so texts appear live
 - [ ] Sentiment-over-time chart per district from `/api/sentiment`
-- [ ] Set a real `SENDER_HASH_SALT`; phone numbers never go in the database
+- [x] Real `SENDER_HASH_SALT` set locally; phone numbers never go in the database
 
 ## Phase 5: suggestions (A, B advises on scoring)
 
 Checkpoint: move the budget slider, watch the suggested pins change.
 
-- [ ] Generate candidates per cell and project type instead of per district; keep the top few per type so the list stays short
-- [ ] "Best impact" score = B's effectiveness x residents affected x feasibility
-- [ ] "Constituent voice" score = how many residents asked for it nearby x feasibility, with no model term
-- [ ] Show the two lists side by side; where they disagree is the story
-- [ ] Running total against the budget ceiling
-- [ ] Turn on `explain=true` so each card carries Gemini's two-sentence rationale, using only the model's numbers
-- [ ] "Add to proposals" button
+- [x] Each candidate is sited at the highest-need 100 m cell in its district
+- [x] "Best impact" score = six outcomes with stated weights, adjusted by local need, x residents reached
+- [x] "Constituent voice" score = alignment x (2026 survey priority + messages in that district)
+- [x] Each card says whether the other list agrees (the sidebar is too narrow for two columns)
+- [x] Budget bar: town share committed against the budget
+- [x] "Why?" button: Gemini's two-sentence rationale on demand, one call per click
+- [x] "Add to proposals" button
 
 ## Phase 6: iMessage agent (A)
 
 Checkpoint: text the number, get an answer, see the message on the dashboard and the "Constituent voice" list shift.
 
-- [ ] `npm install` in `agent/`, add Photon credentials, `npm run dev`, text the number and confirm a reply
-- [ ] Develop against Spectrum's terminal provider so iteration does not depend on a phone
-- [ ] Answer "what would help most near Booker Creek?" from the model's top suggestions for that area
-- [ ] Put the number and a QR code on the web app
+- [x] Agent installed, credentials added, connects to Photon
+- [ ] Send one real iMessage from an Apple device and confirm a reply (neither of us has an iPhone)
+- [x] `npm run chat` runs the agent on Spectrum's terminal provider; full loop confirmed
+- [x] Agent answers "what would help most near Booker Creek?" from the top suggestions
+- [ ] Put the agent's number in `frontend/.env.local` as `VITE_AGENT_NUMBER`; the number and QR code then appear in the sidebar
 - [ ] Stretch: remember each sender's last district; text residents when something they asked for is proposed (with consent and opt-out)
 
 ## Phase 7: polish and demo (both)

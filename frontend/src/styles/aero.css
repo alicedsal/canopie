@@ -102,6 +102,19 @@ textarea {
 .aero:disabled { opacity: 0.6; cursor: wait; }
 .sent { margin: 0; font-size: 0.85rem; color: var(--leaf-deep); }
 .toggle { display: flex; gap: 8px; }
+.mood { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1px solid #fff; }
+.mood.pos { background: var(--leaf); }
+.mood.neg { background: #ff5a36; }
+.mood.neu { background: #9aa7b0; }
+.meta { font-size: 0.75rem; opacity: 0.75; }
+.why { font-style: italic; }
+.bar { height: 12px; border-radius: 999px; border: 1px solid var(--glass-edge); background: rgba(255, 255, 255, 0.5); overflow: hidden; }
+.bar > div { height: 100%; border-radius: 999px; background: linear-gradient(#b9f09a 0%, var(--leaf) 49%, var(--leaf-deep) 50%, #7fd65c 100%); transition: width 0.3s; }
+.spark { width: 100%; height: 48px; }
+.spark path { fill: none; stroke: var(--aqua-deep); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.text-us { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; }
+.text-us span { display: flex; flex-direction: column; }
+.chips .orb { width: 10px; height: 10px; border-width: 1px; cursor: inherit; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chips .aero { flex: 0 0 auto; padding: 5px 11px; font-size: 0.8rem; }
 
@@ -125,8 +138,6 @@ textarea {
 .orb-rejected    { --orb: #9aa7b0; }
 .orb-suggested   { --orb: #c86bff; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 0.8rem; margin-top: auto; }
-.legend .orb { width: 12px; height: 12px; border-width: 1px; vertical-align: -1px; cursor: default; }
 
 .info { color: #123; font-size: 0.85rem; }
 .info ul { margin: 6px 0 0; padding-left: 18px; }
