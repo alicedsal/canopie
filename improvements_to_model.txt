@@ -1,0 +1,422 @@
+# Spatially Aware Gradient Boosting Model for Chapel Hill Projects
+
+## 1. Decision objective
+
+The system should answer two related but distinct questions:
+
+1. **Need model:** Where are environmental, transportation, safety, and infrastructure needs greatest?
+2. **Impact model:** Given a proposed project at a particular location, what changes are likely relative to a no-project baseline?
+
+The recommended architecture uses separate gradient-boosting models for each outcome rather than training directly on one opaque “community benefit” score. Predicted outcomes are subsequently combined in a transparent project-ranking function.
+
+This supports Chapel Hill’s stated priorities:
+
+- Stormwater management
+- Transportation infrastructure
+- Peak-period traffic management
+- Planning and development
+- Long-term sustainability
+- Safety for people using roads, sidewalks, and bicycle paths
+- Accessibility for people with disabilities
+- Bicycle infrastructure and multimodal connectivity
+
+The strategic-goal mapping should also cover:
+
+- Environmental stewardship
+- Economic and financial stewardship
+- Affordable housing
+- Connected community
+- Vibrant and inclusive community
+- Safe community
+
+---
+
+## 2. Recommended spatial and temporal unit
+
+### Primary analysis unit
+
+Create a regular grid of approximately **100-meter cells**, clipped to Chapel Hill’s municipal boundary.
+
+A 100-meter unit is appropriate because:
+
+- Landsat thermal measurements are originally coarser than Sentinel-2 vegetation measurements.
+- USGS stream-gauge readings represent watershed conditions rather than individual parcels.
+- Project impacts often extend beyond parcel boundaries.
+- A common grid makes raster, parcel, watershed, zoning, transportation, and project layers easier to combine.
+
+Retain finer-resolution Sentinel-2 measurements as aggregate statistics within each cell:
+
+- Mean
+- Median
+- Minimum and maximum
+- Standard deviation
+- Proportion below an NDVI threshold
+
+### Secondary units
+
+Attach each cell to:
+
+- Parcel or parcel group
+- Watershed and sub-basin
+- Zoning district
+- Census block group
+- Chapel Hill planning district
+- Nearest road segment
+- Nearest transit stop
+- Nearest greenway or bicycle facility
+
+### Time unit
+
+Use monthly or quarterly observations.
+
+A suggested row key is:
+
+```text
+cell_id × observation_period
+```
+
+For project-effect training, use:
+
+```text
+project_id × affected_cell_id × pre/post observation_period
+```
+
+---
+
+## 3. Required data schema
+
+### 3.1 Baseline spatial table
+
+```text
+cell_id
+geometry
+centroid_x
+centroid_y
+district_id
+watershed_id
+subbasin_id
+zoning_class
+parcel_count
+residential_units
+population
+vulnerable_population
+historically_underserved_population
+```
+
+Population and equity variables should be added from an appropriate demographic source. The listed remote-sensing and municipal APIs are not sufficient to measure distributional equity.
+
+### 3.2 Environmental features
+
+```text
+ndvi_mean
+ndvi_p10
+ndvi_std
+tree_canopy_fraction
+impervious_surface_fraction
+lst_f_mean
+lst_f_p90
+heat_exceedance_days
+night_radiance_mean
+night_radiance_low_fraction
+distance_to_stream_m
+floodplain_fraction
+wetland_fraction
+elevation
+slope
+```
+
+### 3.3 Hydrological features
+
+```text
+rainfall_24h
+rainfall_72h
+booker_creek_discharge
+booker_creek_gauge_height
+gauge_height_change_6h
+upstream_impervious_fraction
+estimated_runoff_index
+historical_flood_incidents
+stormwater_complaints
+```
+
+The Booker Creek gauge must not be copied unchanged into every cell without context. Interact it with:
+
+- Watershed membership
+- Upstream/downstream position
+- Distance to channel
+- Elevation
+- Local impervious surface
+- Recent rainfall
+
+### 3.4 Transportation and safety features
+
+```text
+road_density
+intersection_density
+sidewalk_coverage
+bike_facility_coverage
+greenway_access
+transit_stop_access
+peak_travel_delay
+annual_average_daily_traffic
+bike_ped_crash_density
+severe_crash_density
+crosswalk_density
+streetlight_or_radiance_measure
+downtown_parking_access
+ev_charger_access
+```
+
+### 3.5 Planning and development features
+
+```text
+zoning_class
+form_based_code_zone
+parcel_vacancy_rate
+development_pipeline_units
+permit_processing_indicator
+code_enforcement_incidents
+affordable_units
+affordable_units_at_risk
+jobs_accessible_30min
+services_accessible_15min
+```
+
+### 3.6 Project-intervention features
+
+Each proposed or completed project needs an explicit project record:
+
+```text
+project_id
+project_type
+project_geometry
+construction_start
+completion_date
+capital_cost
+annual_maintenance_cost
+expected_lifetime_years
+federal_match_rate
+state_match_rate
+town_cost
+project_status
+```
+
+The intervention must then be translated into cell-level “dosage” features:
+
+```text
+project_area_fraction
+distance_to_project_m
+tree_canopy_added
+impervious_area_removed
+retention_volume_added
+wetland_area_added
+sidewalk_length_added
+protected_bike_length_added
+greenway_length_added
+crosswalks_added
+transit_access_change
+lighting_change
+affordable_units_added
+```
+
+---
+
+## 4. Target variables
+
+Train one model per measurable outcome.
+
+### Environmental targets
+
+```text
+y_heat_change
+    = post_project_lst_f - expected_no_project_lst_f
+
+y_ndvi_change
+    = post_project_ndvi - expected_no_project_ndvi
+
+y_runoff_change
+    = post_project_runoff_index - expected_no_project_runoff_index
+
+y_flood_risk_change
+    = post_project_flood_probability - expected_no_project_probability
+```
+
+Negative values are beneficial for heat, runoff, and flood-risk targets.
+
+### Transportation and safety targets
+
+```text
+y_peak_delay_change
+y_bike_ped_crash_risk_change
+y_walk_access_change
+y_bike_access_change
+y_transit_access_change
+```
+
+### Planning and community targets
+
+```text
+y_affordable_units_change
+y_jobs_access_change
+y_service_access_change
+y_resident_satisfaction_change
+```
+
+Resident-satisfaction outcomes will probably exist only at a district or town-wide scale. They should not be assigned directly to 100-meter cells. Use a hierarchical structure:
+
+```text
+cell predictions
+    → population-weighted district aggregation
+    → district satisfaction model
+```
+
+---
+
+## 5. Spatial weights using PySAL
+
+Use multiple spatial relationships because different impacts operate at different scales.
+
+### 5.1 Local adjacency
+
+For regular grid cells:
+
+```python
+w_queen = Queen.from_dataframe(cells, ids="cell_id")
+w_queen.transform = "r"
+```
+
+This captures immediate adjacency.
+
+### 5.2 Distance-band relationships
+
+```python
+w_250 = DistanceBand.from_dataframe(
+    cells,
+    threshold=250,
+    binary=False,
+    alpha=-1.0,
+    ids="cell_id"
+)
+w_250.transform = "r"
+
+w_500 = DistanceBand.from_dataframe(
+    cells,
+    threshold=500,
+    binary=False,
+    alpha=-1.0,
+    ids="cell_id"
+)
+w_500.transform = "r"
+```
+
+These encode neighborhood-scale environmental spillovers.
+
+### 5.3 K-nearest neighbors
+
+```python
+w_knn = KNN.from_dataframe(cells, k=8, ids="cell_id")
+w_knn = w_knn.symmetrize()
+w_knn.transform = "r"
+```
+
+KNN weights help prevent isolated cells, particularly around irregular municipal boundaries.
+
+### 5.4 Watershed relationships
+
+Create a custom weights matrix linking cells that are:
+
+- In the same sub-basin
+- Hydrologically upstream or downstream
+- Connected through the drainage network
+
+Direction should be preserved for runoff modeling where possible.
+
+### 5.5 Transportation-network relationships
+
+Create a separate graph based on:
+
+- Adjoining road segments
+- Walkable route distance
+- Bicycle-network connectivity
+- Transit travel time
+
+Euclidean adjacency alone is not adequate for transportation-access outcomes.
+
+---
+
+## 6. Spatial encodings
+
+### 6.1 Spatially lagged explanatory variables
+
+For selected baseline variables, calculate neighborhood summaries:
+
+```python
+from libpysal.weights import lag_spatial
+
+for variable in [
+    "ndvi_mean",
+    "lst_f_mean",
+    "impervious_surface_fraction",
+    "bike_ped_crash_density",
+    "peak_travel_delay",
+    "vulnerable_population",
+]:
+    cells[f"{variable}_lag_q"] = lag_spatial(w_queen, cells[variable])
+    cells[f"{variable}_lag_250"] = lag_spatial(w_250, cells[variable])
+    cells[f"{variable}_lag_500"] = lag_spatial(w_500, cells[variable])
+```
+
+Also calculate differences between each cell and its surroundings:
+
+```python
+cells[f"{variable}_local_difference"] = (
+    cells[variable] - cells[f"{variable}_lag_250"]
+)
+```
+
+These help distinguish a generally hot neighborhood from an unusually hot cell within that neighborhood.
+
+### 6.2 Local spatial clusters
+
+Use Local Moran statistics for descriptive spatial encodings:
+
+```python
+from esda import Moran_Local
+
+local_moran = Moran_Local(
+    cells["lst_f_mean"].to_numpy(),
+    w_queen,
+    permutations=999,
+    seed=42
+)
+
+cells["lst_localran"] = local_moran.Is
+
+3. **European Space Agency Copernicus Data Space Ecosystem — Sentinel-2 Multispectral Instrument Data**
+4. **U.S. Geological Survey Earth Resources Observation and Science Center — Landsat 9 TIRS-2 Data**
+5. **NASA and NOAA — Visible Infrared Imaging Radiometer Suite Day/Night Band Data**
+6. **U.S. Geological Survey National Water Information System — Booker Creek near Chapel Hill, NC, Gauge Station 02097000**
+
+### Municipal and State Geospatial Data
+
+7. **Town of Chapel Hill Open Data and GIS — ArcGIS REST Services**
+8. **Town of Chapel Hill Capital Improvements Program Data**
+9. **North Carolina Department of Transportation — Complete Streets and Bicycle/Pedestrian Spatial Data Services**
+10. **Federal Emergency Management Agency OpenFEMA — Building Resilient Infrastructure and Communities Data**
+
+### Mapping and Software
+
+11. **Google Maps Platform — Maps JavaScript API**
+12. **vis.gl — React Google Maps SDK**
+13. **PySAL — Python Spatial Analysis Library**
+14. **libpysal — Spatial Weights and Core Spatial Data Structures**
+15. **esda — Exploratory Spatial Data Analysis**
+16. **spreg — Spatial Regression Models**
+17. **XGBoost — Extreme Gradient Boosting**
+18. **LightGBM — Light Gradient-Boosting Machine**
+19. **GeoPandas — Python Geospatial Data Analysis**
+20. **scikit-learn — Machine-Learning Model Selection, Validation, and Evaluation**
+
+### Source note
+
+The community-priority documents inform the model’s objectives, outcomes, constraints, and project-ranking criteria. Satellite, environmental, transportation, hydrological, municipal, and demographic datasets provide model features and outcome measurements. PySAL, XGBoost, and LightGBM provide the spatial-analysis and predictive-modeling methods. Source versions, retrieval dates, API endpoints, licensing terms, and dataset identifiers should be recorded when the data pipeline is implemented.
