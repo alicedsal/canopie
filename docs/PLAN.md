@@ -57,8 +57,9 @@ B's engine turned out to be rule-based scoring (hand-set formulas), not a traine
 Checkpoint: every map cell has the features the model needs, stored in Tiger Data.
 
 - [x] Spatial unit fixed at 100 m cells (`backend/ml/grid.py`, in memory; a `cells` table in Tiger Data is optional)
-- [ ] B: load population (Census ACS block groups) into the database
-- [ ] B: load the geospatial features the model uses (NDVI from Sentinel-2, surface temperature from Landsat, others) into `observations`, keyed by cell or district
+- [x] Population per 100 m cell loaded from the town's density raster (`python -m ingest.town_grid`)
+- [x] Real NDVI (Sentinel-2), surface temperature (Landsat), town limits and stream distance per 100 m cell, in `backend/ml/data/town_grid.json`
+- [ ] Not loaded: night lights (VIIRS), NCDOT bike/ped data, FEMA data, and the town's capital projects (that layer needs a login)
 - [x] A: 30 days of real Booker Creek gauge readings loaded (USGS 02097386; the 02097000 in the early notes is the Haw River)
 - [x] A: schema and seed loaded on the Tiger Cloud service; `DATABASE_URL` points at it
 - [x] A: Booker Creek gauge chart in the sidebar, read from the `observations_daily` continuous aggregate

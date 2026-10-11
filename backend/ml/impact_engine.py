@@ -4,8 +4,9 @@ Python port of B's `chapel-hill-spatial-gbdt-impact-engine/src/ml/gbdtEngine.ts`
 formula-for-formula so both give the same numbers (checked by ml/test_impact_engine.py).
 
 What it is: hand-set scoring rules over location features and project size. It is NOT a
-trained model: the coefficients and the district baselines below were chosen by hand, not
-fitted to data. Describe it that way in the demo. The TypeScript original also exposes
+trained model: the coefficients were chosen by hand, not fitted to data. The district
+baselines below are hand-entered too; the app overrides them with satellite measurements
+when the town grid has been built (see `baseline` in predict_impact). Describe it that way in the demo. The TypeScript original also exposes
 "SHAP values" and a "decision tree"; those are hard-coded there and are not ported.
 """
 import math
@@ -64,9 +65,13 @@ def location_features(loc: tuple[float, float]) -> dict:
     }
 
 
-def predict_impact(loc: tuple[float, float], p: dict) -> dict:
-    """p: capital_cost, fema, ncdot, canopy_sqft, retention_acres, bike_miles, affordable_units, lumens."""
+def predict_impact(loc: tuple[float, float], p: dict, baseline: dict | None = None) -> dict:
+    """p: capital_cost, fema, ncdot, canopy_sqft, retention_acres, bike_miles, affordable_units, lumens.
+    baseline: measured ndvi / lst_f for the site (ml/grid.py). Without it the engine uses its
+    own interpolated district figures, which is what the parity test checks."""
     f = location_features(loc)
+    if baseline:
+        f.update({k: baseline[k] for k in ("ndvi", "lst_f") if baseline.get(k) is not None})
     rbf = f["rbf"]
     canopy = p["canopy_sqft"] / 100_000
     retention = p["retention_acres"]

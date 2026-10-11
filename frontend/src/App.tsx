@@ -233,7 +233,7 @@ export default function App() {
                   alignment {Math.round((s.approval_prob ?? 0) * 100)}/100
                 </span>
                 <span>
-                  {s.constituents_affected?.toLocaleString()} residents · {s.constituent_mentions} asked for this
+                  {s.constituents_affected?.toLocaleString()} residents within 500 m · {s.constituent_mentions} asked for this
                 </span>
                 {mode === "constituent" && s.survey && (
                   <span>

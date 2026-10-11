@@ -3,11 +3,12 @@
 Kept separate from the impact model on purpose. Need says where a problem is; impact
 (ml/impact_engine.py) says what a given project would change there.
 
-Each domain is a 0..1 percentile rank across the grid, built from the neighbourhood
-features in ml/grid.py so that one odd cell does not dominate:
+Each domain is a 0..1 percentile rank across the grid. Heat and canopy come from satellite
+measurements and use the neighbourhood features in ml/grid.py so that one odd cell does
+not dominate. Lighting still rests on interpolated night-radiance figures, not real data:
   heat      surface temperature: 250 m neighbourhood, plus how much hotter the cell is than it
   canopy    lack of vegetation over the 250 m neighbourhood
-  flood     inside a creek sub-basin and close to the Booker Creek gauge
+  flood     closeness to the nearest mapped stream (town stormwater division centerlines)
   lighting  low night-time radiance over the 250 m neighbourhood
 
 Transport, safety, accessibility and housing need are in the design document but have no
@@ -25,7 +26,9 @@ def _raw(cell: dict) -> dict:
     return {
         "heat": cell["lst_f_lag_250"] + 2 * cell["lst_f_local_difference"],
         "canopy": -cell["ndvi_lag_250"],
-        "flood": (1.0 if cell["watershed"] else 0.0) + math.exp(-cell["gauge_dist_km"]),
+        # Fallback when the town grid has not been built: sub-basin flag and gauge distance.
+        "flood": (-cell["stream_m"] if cell["stream_m"] is not None
+                  else (1.0 if cell["watershed"] else 0.0) + math.exp(-cell["gauge_dist_km"])),
         "lighting": -cell["viirs_lag_250"],
     }
 

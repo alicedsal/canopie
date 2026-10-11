@@ -20,10 +20,15 @@ a planning map for chapel hill, nc. it shows what the town has built and propose
 | resident priorities | **real.** the 2026 town of chapel hill community survey (etc institute, 421 households), with page references in `backend/ml/survey.py`. |
 | stream gauge | **real.** 30 days of readings from usgs gauge 02097386, booker creek at sr 1751. |
 | resident messages | **real** once people send them; four seed messages are examples. |
-| scoring | **rule-based, not trained.** `backend/ml/impact_engine.py` is hand-set formulas over location and project size. there is no before-and-after data on real projects to train on yet. |
-| canopy and heat per cell | **placeholder.** interpolated from six hand-entered district figures, not read from satellite images. |
-| projects on the map | **placeholder.** the seven seed projects are invented examples. |
-| project costs and sizes | **placeholder.** typical figures chosen by hand in `backend/ml/priors.py`. |
+| scoring | **rule-based, not trained.** `backend/ml/impact_engine.py` is hand-set formulas over the measured values above and project size. there is no before-and-after data on real projects to train on yet. |
+| tree canopy per cell | **real.** sentinel-2 satellite image of 1 july 2026, vegetation index averaged to each 100 m cell. |
+| heat per cell | **real.** landsat 8 surface temperature of 5 july 2026, averaged to each 100 m cell. this is the ground surface on one hot afternoon, not air temperature or a seasonal average. |
+| town limits | **real.** the town's own boundary; the grid is the 5,653 cells inside it. |
+| streams | **real.** the town stormwater division's stream centerlines; flood need is closeness to the nearest one. |
+| residents near a project | **real.** the town's population density map, summed within 500 m of each site. its unit is undocumented; people per square mile is assumed, which gives a town total of about 57,600. |
+| street lighting | **placeholder.** interpolated from six hand-entered district figures. no night-light data is loaded. |
+| projects on the map | **examples.** the seven seed projects are invented. the town's capital projects map layer needs a login, so it could not be loaded. |
+| project costs and sizes | **estimates.** typical figures chosen by hand in `backend/ml/priors.py`, not taken from town budgets. |
 
 `docs/MODEL.md` goes through the model design document section by section: what is built, what is not, and what data each missing piece needs.
 
@@ -76,6 +81,8 @@ open http://localhost:5173.
 .venv/bin/python -m ingest.nwis P30D
 ```
 
+the satellite and town data ships with the repo in `backend/ml/data/town_grid.json`. to rebuild it from the sources, run `.venv/bin/python -m ingest.town_grid` from `backend/` (about a minute).
+
 **6. optional: the agent.** in a third terminal, from `agent/`:
 
 ```bash
@@ -94,6 +101,7 @@ npm run chat
  residents ── web form ───────────────────────────────┤
                                                       v
  usgs gauge ── backend/ingest ──> tiger data (postgres + timescaledb)
+ satellites, town gis ── backend/ingest ──> backend/ml/data/town_grid.json
                                     │   projects, districts
                                     │   observations + feedback hypertables
                                     │   continuous aggregates
@@ -110,9 +118,9 @@ npm run chat
 | --- | --- | --- |
 | `frontend/` | react + vite + google maps. glass ui in `src/styles/aero.css`. | frutiger aero |
 | `backend/app/` | fastapi: projects, need layer, metrics, survey, feedback, suggestions, agent endpoint. | |
-| `backend/app/services/gemini.py` | every gemini call: message analysis, rationales, agent replies. falls back quietly when rate limited. | gemini |
-| `backend/ml/` | 100 m grid with neighbourhood features, need model, rule-based impact engine, ranking, survey data. | |
-| `backend/ingest/` | loader for the usgs stream gauge. satellite and town-records loaders are not written. | |
+| `backend/app/services/gemini.py` | every gemini call: message analysis, rationales, agent replies. falls back quietly when rate limited. | gemini api |
+| `backend/ml/` | 100 m grid of measured values with neighbourhood features, need model, rule-based impact engine, ranking, survey data. | |
+| `backend/ingest/` | loaders for the usgs stream gauge and for the town grid (sentinel-2, landsat, town limits, streams, population). | |
 | `db/` | schema with hypertables, continuous aggregates and compression, plus seed data. | tiger data |
 | `agent/` | imessage agent on photon spectrum. `npm run chat` runs it in the terminal for testing without an apple device. | photon, community |
 | `chapel-hill-spatial-gbdt-impact-engine/` | the original standalone prototype of the scoring engine. the app does not run it; its formulas were ported to `backend/ml/impact_engine.py`. | |
@@ -123,4 +131,6 @@ npm run chat
 
 ## built with
 
-react, vite, google maps platform, fastapi, tiger data (timescaledb), google gemini, photon spectrum.
+**languages:** python, typescript, sql, css.
+
+**tools and services:** react, vite, google maps platform, fastapi, tiger data (timescaledb), gemini api, photon spectrum, claude code.

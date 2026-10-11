@@ -75,7 +75,7 @@ export default function MapView({ projects, suggestions, needCells, needColor, f
                   <li>Council-goal alignment: {Math.round(selected.approval_prob * 100)}/100</li>
                   <li>Canopy (NDVI): {selected.delta_ndvi! >= 0 ? "+" : ""}{selected.delta_ndvi}</li>
                   <li>Surface temp: {selected.delta_lst_f} °F</li>
-                  <li>Residents affected: {selected.constituents_affected?.toLocaleString()}</li>
+                  <li>Residents within 500 m: {selected.constituents_affected?.toLocaleString()}</li>
                 </ul>
               )}
             </div>

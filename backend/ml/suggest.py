@@ -4,7 +4,7 @@ Follows improvements_to_model.txt, section 1: outcomes are predicted separately,
 combined in a transparent ranking function (OUTCOME_WEIGHTS and OUTCOME_SCALE below),
 never in one opaque score. Every pick carries its per-outcome contributions.
 """
-from .grid import cells
+from .grid import DISTRICT_RADIUS_M, cell_at, cells
 from .impact_engine import DISTRICTS, haversine_m, predict_impact
 from .need import blended, need_scores
 from .priors import CATEGORIES, SIZE_FIELDS
@@ -45,9 +45,15 @@ def predict(project: dict, district: dict) -> dict:
         **{k: template[k] * scale for k in SIZE_FIELDS},
     }
     loc = (project.get("lat") or district["lat"], project.get("lng") or district["lng"])
-    out = predict_impact(loc, engine_input)
+    site = cell_at(*loc)
+    out = predict_impact(loc, engine_input, site)
     nothing = predict_impact(loc, {"capital_cost": 0, "fema": False, "ncdot": False,
-                                   **{k: 0 for k in SIZE_FIELDS}})
+                                   **{k: 0 for k in SIZE_FIELDS}}, site)
+    # Residents living within 500 m of the site when the town grid has population;
+    # otherwise a fixed share of the district's population.
+    residents = (site or {}).get("residents_500m")
+    if residents is None:
+        residents = int(district["population"] * template["reach"])
     outcomes = {
         "flood": out["runoff_mgal"],
         "heat": -out["delta_lst_f"],
@@ -64,7 +70,7 @@ def predict(project: dict, district: dict) -> dict:
         "delta_lst_f": out["delta_lst_f"],
         "delta_flood_risk": None,  # the engine reports runoff held back instead, see runoff_mgal
         "runoff_mgal": out["runoff_mgal"],
-        "constituents_affected": int(district["population"] * template["reach"]),
+        "constituents_affected": residents,
         "town_cost_usd": out["fiscal"]["net_town_cost"],
         "goals": out["goals"],
         "survey_delta_pct": out["survey_delta_pct"],
@@ -89,7 +95,7 @@ def _best_site(district: dict, need_weights: dict) -> tuple[dict, dict]:
     centre = (district["lat"], district["lng"])
     engine_key = min(DISTRICTS, key=lambda k: haversine_m(centre, DISTRICTS[k][:2]))
     grid, scores = cells(), need_scores()
-    local = [k for k, c in grid.items() if c["district"] == engine_key]
+    local = [k for k, c in grid.items() if c["district"] == engine_key and c["centre_dist_m"] <= DISTRICT_RADIUS_M]
     if need_weights:
         key = max(local, key=lambda k: blended(scores[k], need_weights))
     else:
